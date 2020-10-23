@@ -1,0 +1,44 @@
+Package: PoDCall
+Type: Package
+Title: Positive Droplet Calling for DNA Methylation Droplet Digital PCR 
+Version: 0.99.0
+Authors@R: c(person("Hans Petter", "Brodal", 
+                    role=c("aut", "cre"), 
+                    email="hans.petter.brodal@rr-research.no"),
+            person("Marine", "Jeanmogin", role="aut", 
+                    email="marine.jeanmougin@rr-research.no"))
+Description: Reads files exported from 'QuantaSoft' containing amplitude values 
+    from a run of ddPCR (96 well plate) and robustly sets thresholds to 
+    determine positive droplets for each channel of each individual well. 
+    Concentration and normalized concentration in addition to other metrics is 
+    then calculated for each well. Results are returned as a table, optionally 
+    written to file, as well as optional plots (scatterplot and 
+    histogram) for both channels per well written to file. The package includes
+    a shiny application which provides an interactive and user-friendly 
+    interface to the full functionality of PoDCall.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Depends: R (>= 4.0)
+Imports: 
+    ggplot2,
+    gridExtra,
+    mclust,
+    diptest,
+    rlist,
+    shiny,
+    DT,
+    LaplacesDemon,
+    purrr,
+    shinyjs,
+    readr,
+    grDevices,
+    stats,
+    utils
+Suggests: 
+    knitr,
+    testthat
+VignetteBuilder: knitr
+biocViews: Classification, Epigenetics, ddPCR, DifferentialMethylation,
+    CpGIsland, DNAMethylation,

@@ -1,0 +1,392 @@
+---
+title: "PoDCall: Positive Droplet Caller for DNA Methylation ddPCR"
+output: 
+    BiocStyle::html_document
+        
+vignette: >
+    %\VignetteIndexEntry{PoDCall: Positive Droplet Caller for DNA Methylation ddPCR}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+# Introduction
+PoDCall (Positive Droplet Caller) is a package that aims to provide a robust
+calling of positive droplets in DNA methylation droplet digital PCR (ddPCR) 
+experiments performed on the Bio-Rad platform.
+PoDCall provides functions that reads files exported from QuantaSoft containing 
+amplitudes from a run of ddPCR (one 96 well plate), sets thresholds for both 
+channels of each individual well and calculates concentrations and normalized 
+concentration for each well. The resulting threshold table can optionally be 
+written to file automatically by the main workflow function. 
+PoDCall also offers functionality for plotting, both individual wells and 
+multiple well plots. Plots for individual wells can be made and saved as 
+.pdf-files as part of the main workflow function, or by calling the various 
+plotting functions individually. 
+
+## Gaussian Mixture Models
+DdPCR experiments generate a mixture of droplets, positive droplets which 
+contain the target that will be amplified, and negative droplets that does not 
+contain the target and show no amplification. PoDCall relies on fitting Gaussian
+mixture models to set thresholds for each individual well 
+that will be used to classify the droplets as either positive or negative.
+For more details on the concepts of PoDCall, see the application note.
+
+
+## Input Data
+The input data is .csv-files exported from from 'QuantaSoft', and each file 
+contains the amplitude values of droplets from one well of a 96 well plate.
+The first two columns of the files should have headers 'Ch1 Amplitude' and 
+'Ch2 Amplitude'. To read in data, use the function importAmplitudeData, which 
+will read all amplitude files in the directory given as argument. Each file will
+be stored as a named data frame in a list, where the name will be the well ID. 
+For this reason, all raw data files in the directory given as argument should 
+be from the same 96 well plate to avoid well coordinate duplicates.
+
+
+# Installation
+PoDCall requires some packages to be installed, and if any required packages are
+not yet installed, the installation of PoDCall should take care of it (you will 
+be prompted to install the packages that are missing).   
+
+The released version of PoDCall can not yet be installed from 
+[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be installed 
+locally from source by using `install_local()` function from the `remotes` 
+package:
+
+``` {r installation, eval=FALSE}
+## Install remotes
+install.packages("remotes")
+
+## Install PoDCall
+remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
+
+```
+After installing PoDCall and the required packages, PoDCall can be loaded with:
+
+``` {r loading, eval=TRUE}
+
+library(PoDCall)
+
+```
+
+# Example / Usage
+
+One step of setting thresholds includes a random sampling of droplets to greatly
+reduce running time. To ensure reproducible results it is recommended to set a
+seed using `set.seed()`.
+To run the full PoDCall workflow, call the function `podcallDdpcr()`:
+
+``` {r, eval=FALSE}
+## Run PoDCall
+thresholdTable <- podcallDdpcr(dataDirectory="path/to/data/")
+```
+Where "path/to/data/" is the path of the directory that contains amplitude files
+from a well plate, in which the files have names that end with 
+"_wellID_amplitude.csv".
+
+
+## Optional arguments
+The following arguments have default values, but can be given other values if
+desired. For example to write results to file, which is disabled by default.
+
+### sampleSheetFile 
+Path to sample sheet file. Must be a .csv file exported from QuantaSoft and must
+include the following columns: Well, Sample, TargetType and Target. The entries
+in the column TargetType must be either 'Ch1Unknown' or Ch2Unknown, and is used
+to extract rows with information from either channel 1 or channel 2. An example
+file has been included in the package, which can be found using 
+`system.file("extdata", "Sample_names.csv", package="PoDCall")`
+
+### B 
+The number of permutations used by the likelihood ratio test (LRT) 
+which decides the number of components in the model fitted from the data. 
+Default value `B=400`.
+
+### Q 
+A parameter used for calling outliers. Q is multiplied with the interquartile 
+range of the distribution of amplitude values to determine if droplets of 
+extreme amplitude values are to be considered outliers. The default value is 
+`Q=9`, which has been determined through cell line experiments and testing.
+A higher Q will generally result in a higher or more strict threshold. Q 
+provides an option to adjust how thresholds are set in a systematic and 
+reproducible way. It is recommended to try a few different values and visually
+inspect the results.
+
+### refwell 
+The well used as reference when calculating the shift in baseline
+between wells. By default `refwell=1`, but can be changed in cases where the 
+first well is not suited to be used.  
+
+### ch2 
+If channel 2 is not in use, set ch2 = FALSE to avoid error caused by 
+empty channel 2 column. Default is `ch2=TRUE`.
+
+### resultsToFile 
+The user can choose to let PoDCall save the results table as a .csv-file by 
+setting `resultsToFile=TRUE` (default: `resultsToFile = FALSE`). When 
+resultsToFile is set to TRUE, a results directory will be created where the
+result file will be saved. The results directory will have the same name as the
+data directory with "_results" added: "path/to/data_results/
+
+### plots 
+The user can choose to make plots that are written to file by setting 
+`plots=TRUE` (default: `plots=FALSE`). Plots will be saved to the results 
+directory created when `resultsToFile=TRUE`. The results directory will also be
+created if only `plots=TRUE`.
+
+
+## Threshold table columns
+The table that is returned when running `podcall_ddpcr()` contains columns with 
+more or less self-explanatory column names, and well ID (well coordinates) as
+rownames:
+
+### sample_id
+If a sample sheet file is provided, this will have the sample ID from the sample
+sheet. Otherwise empty
+
+### thr_target 
+the threshold set for channel 1, assumed to be the target
+
+### thr_ctrl 
+The threshold set for channel 2, assumed to be the control
+
+### pos_dr_target
+The number of positive droplets in channel 1 (target)
+
+### pos_dr_ctrl 
+The number of positive droplets in channel 2 (control)
+
+### tot_droplets 
+Number of droplets.
+
+### c_target 
+Concentration of target, calculated by the formula 
+$-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
+(where does 0.000851 come from from and what is the name of this parameter) 
+where neg_drop_tar is number of negative droplets in channel 1 (target).
+
+### c_ctrl 
+Concentration of control, calculated by the formula 
+$-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}$ 
+where neg_drop_ctrl is number of negative droplets in channel 2 (control).
+
+
+### c_norm 
+Normalized concentration, calculated by the formula 
+$\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400$
+
+
+# PoDCall functions
+
+`podcall_ddpcr()` is the main wrapper function that returns a table with the 
+results of PoDCall to the user. This function uses a set of functions that read 
+the amplitude data from file, set thresholds and make plots. All functions 
+involved can be used individually should the user only want to use some of the 
+functionality of PoDCall. Also see help files for more details about the 
+functions and their arguments.
+
+## `importAmplitudeData()` 
+Reads .csv-files with amplitude data outputted from QuantaSoft and store the 
+data in a list, one data frame per well. Each element in the list will be named 
+using it's well ID (coordinate) of the 96 well plate that the sample belong to.
+
+```{r import-amplitude-data, echo=TRUE}
+## Path to example data files included in PoDCall
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+
+## Read in data files
+dataList <- importAmplitudeData(dataDirectory=path)
+str(dataList)
+```
+
+## `importSampleSheet()` 
+Reads a .csv-file outputted from QuantaSoft to get information about the 
+samples: Sample name/id, Assay for target and control. 
+
+```{r import-sample-sheet, echo=TRUE}
+## Path to example files included in PoDCall
+path <- system.file("extdata", "Sample_names.csv", package="PoDCall")
+
+## Select wells to get information for
+well_id <- c("A04", "B04", "D04")
+
+## Read in sample sheet information for selected wells
+sampleSheet <- importSampleSheet(sampleSheet=path, well_id=well_id)
+print(sampleSheet)
+
+```
+
+## `podcallThresholds()` 
+Takes a list of data frames, one for each well, as argument and sets 
+individual thresholds for each channel of each well. It returns a table with 
+thresholds, number of positive droplets, concentrations etc. The number of 
+permutations for likelihood ratio test is by default set to `B=400` as a 
+compromise between run time and stability of the results. The parameter for 
+calling outliers is by default set to `Q=9`. Higher Q means more conservative 
+(higher) thresholds, lower Q will result in over all lower thresholds.
+
+```{r set-thresholds, eval=FALSE}
+## Path to example data files included in PoDCall
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+
+## Read in data files
+ampData <- importAmplitudeData(dataDirectory=path)
+
+## Calculate thresholds, metrics, concentrations
+thresholdTable <- podcallThresholds(plateData=ampData)
+print(thresholdTable)
+```
+
+## `podcallPlots()`
+Takes the threshold and amplitude values corresponding to a channel of a well as
+arguments, calls functions that makes scatter plot and histogram and draws a 
+plot with both.
+
+```{r channel-plot, echo=TRUE}
+## Read in data and threshold table
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ampData <- importAmplitudeData(dataDirectory=path)
+thresholdTable <- thrTable
+
+## Select channel and well to plot
+ch <- 1 # target channel
+well_id <- names(ampData)[1] # First well in list
+
+## Plot title
+plotTitle <- paste0(well_id, ", Ch", ch)
+
+## Create plot
+podcallChannelPlot(channelData=ampData[[well_id]][,ch],
+                    thr=thresholdTable[well_id, "thr_target"],
+                    channel=ch,
+                    plotId=plotTitle)
+```
+
+## `podcallScatterplot()` 
+Takes the threshold and amplitude values corresponding
+to a channel of a well as argument and returns a scatter plot.
+
+```{r scatter-plot, echo=TRUE}
+## Read in data and threshold table
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ampData <- importAmplitudeData(dataDirectory=path)
+thresholdTable <- thrTable
+
+## Select channel and well to plot
+ch <- 1 # target channel
+well_id <- names(ampData)[1] # First well in list
+
+## Plot title
+plotTitle <- paste0(well_id, ", Ch", ch)
+
+## Create plot
+podcallScatterplot(channelData=ampData[[well_id]][,ch],
+                    thr=thresholdTable[well_id, "thr_target"],
+                    channel=ch,
+                    plotId=plotTitle)
+
+```
+
+## `podcallHistogram()` 
+Takes the threshold and amplitude values corresponding to
+a channel of a well as argument, and returns a histogram.
+
+```{r plot-histogram, echo=TRUE}
+## Read in data and threshold table
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ampData <- importAmplitudeData(dataDirectory=path)
+thresholdTable <- thrTable
+
+## Select channel and well to plot
+ch <- 1 # target channel
+well_id <- names(ampData)[1] # First well in list
+
+## Plot title
+plotTitle <- paste0(well_id, ", Ch", ch)
+
+## Create plot
+podcallHistogram(channelData=ampData[[well_id]][,ch],
+                thr=thresholdTable[well_id, "thr_target"],
+                channel=ch,
+                plotId=plotTitle)
+```
+
+## `podcallMultiplot()` 
+takes a list of data frames with amplitude data, one per well, and their 
+respective thresholds as arguments and returns faceted scatter plots suitable 
+for comparing wells.
+
+```{r comparison-plot, echo=TRUE}
+## Read in data and threshold table
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ampData <- importAmplitudeData(dataDirectory=path)
+thresholdTable <- thrTable
+
+## Channel to plot
+ch <- 1
+
+## Create comparison plot
+podcallMultiplot(plateData=ampData,
+                thresholds=thresholdTable[names(ampData),], 
+                channel=ch)
+
+```
+
+# PoDCall shiny application
+
+PoDCall does also include an application powered by shiny that launches in a 
+web browser. The application provides a user friendly and interactive interface 
+to the functionality of PoDCall. To start the app:
+
+```{r launch-shiny-app, eval=FALSE}
+podcallShiny()
+```
+
+# PodCall example data
+There are some amplitude files and a sample sheet included in the package that 
+are intended to be used to run examples and to try out the functionality of 
+PoDCall. The data files are from a real experiment performed with cell line 
+samples. There is also a threshold table computed from the example data 
+included. PoDCall takes a few minutes to run due to bootstrapping, and this 
+table is used in examples for functions where threshold is an argument.
+
+## Cell Line Amplitude Data
+The cell line amplitude data files can be found in the "extdata" subdirectory 
+of the package directory and can be found using `system.file()`:
+```{r example-data, eval=TRUE}
+## Path to files
+path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+
+## List files
+list.files(path)
+```
+The control assay used for the samples in the example data files is an assay
+developed in-house called 4Plex
+[H. Pharo et al](http://dx.doi.org/10.1186/s13148-018-0456-5).
+
+## Calculated Threshold Table
+The already calculated threshold table is instantly available when PoDCall is
+loaded, and is available as an object called `thrTable`. See `?thrTable` for 
+help file with documentation on the table. 
+
+```{r example-thresholds, echo=TRUE}
+## The threshold table
+thrTable
+```
+
+# Session info
+Here is the output of `sessionInfo()` on the system on which this document was
+compiled
+
+```{r session-info, eval=TRUE}
+sessionInfo()
+```
+
+
+
