@@ -53,14 +53,16 @@ missing).
 
 The released version of PoDCall can not yet be installed from
 [BIOCONDUCTOR](http://bioconductor.org/), but for now it can be
-installed locally from source by using `install_local()` function from
-the `remotes` package:
+installed from GitHub or from a source file using:
 
 ``` r
-## Install remotes
-install.packages("remotes")
 
-## Install PoDCall
+## Install PoDCall from GitHub
+install.packages("devtools")
+devtools::install_github("HansPetterBrodal/PoDCall")
+
+## Install PoDCall from source file
+install.packages("remotes")
 remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
 ```
 
@@ -482,7 +484,7 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] Rcpp_1.0.5           later_1.1.0.1        compiler_4.0.2      
 #>  [4] pillar_1.4.6         shinyjs_2.0.0        tools_4.0.2         
-#>  [7] digest_0.6.25        mclust_5.4.6         evaluate_0.14       
+#>  [7] digest_0.6.26        mclust_5.4.6         evaluate_0.14       
 #> [10] lifecycle_0.2.0      tibble_3.0.4         gtable_0.3.0        
 #> [13] pkgconfig_2.0.3      rlang_0.4.8          rstudioapi_0.11     
 #> [16] cli_2.1.0            shiny_1.5.0          yaml_2.2.1          

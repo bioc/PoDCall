@@ -56,14 +56,16 @@ be prompted to install the packages that are missing).
 
 The released version of PoDCall can not yet be installed from 
 [BIOCONDUCTOR](http://bioconductor.org/), but for now it can be installed 
-locally from source by using `install_local()` function from the `remotes` 
-package:
+from GitHub or from a source file using:
 
 ``` {r installation, eval=FALSE}
-## Install remotes
-install.packages("remotes")
 
-## Install PoDCall
+## Install PoDCall from GitHub
+install.packages("devtools")
+devtools::install_github("HansPetterBrodal/PoDCall")
+
+## Install PoDCall from source file
+install.packages("remotes")
 remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
 
 ```
