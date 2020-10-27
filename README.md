@@ -34,9 +34,9 @@ the application note.
 
 ## Input Data
 
-The input data is .csv-files exported from from ‘QuantaSoft’, and each
-file contains the amplitude values of droplets from one well of a 96
-well plate. The first two columns of the files should have headers ‘Ch1
+The input data is .csv-files exported from ‘QuantaSoft’, and each file
+contains the amplitude values of droplets from one well of a 96 well
+plate. The first two columns of the files should have headers ‘Ch1
 Amplitude’ and ‘Ch2 Amplitude’. To read in data, use the function
 importAmplitudeData, which will read all amplitude files in the
 directory given as argument. Each file will be stored as a named data
@@ -464,16 +464,16 @@ document was compiled
 sessionInfo()
 #> R version 4.0.2 (2020-06-22)
 #> Platform: x86_64-w64-mingw32/x64 (64-bit)
-#> Running under: Windows 10 x64 (build 19041)
+#> Running under: Windows 7 x64 (build 7601) Service Pack 1
 #> 
 #> Matrix products: default
 #> 
 #> locale:
-#> [1] LC_COLLATE=Norwegian Bokmål_Norway.1252 
-#> [2] LC_CTYPE=Norwegian Bokmål_Norway.1252   
-#> [3] LC_MONETARY=Norwegian Bokmål_Norway.1252
-#> [4] LC_NUMERIC=C                            
-#> [5] LC_TIME=Norwegian Bokmål_Norway.1252    
+#> [1] LC_COLLATE=Norwegian (Bokmål)_Norway.1252 
+#> [2] LC_CTYPE=Norwegian (Bokmål)_Norway.1252   
+#> [3] LC_MONETARY=Norwegian (Bokmål)_Norway.1252
+#> [4] LC_NUMERIC=C                              
+#> [5] LC_TIME=Norwegian (Bokmål)_Norway.1252    
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -484,21 +484,19 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] Rcpp_1.0.5           later_1.1.0.1        compiler_4.0.2      
 #>  [4] pillar_1.4.6         shinyjs_2.0.0        tools_4.0.2         
-#>  [7] digest_0.6.26        mclust_5.4.6         evaluate_0.14       
-#> [10] lifecycle_0.2.0      tibble_3.0.4         gtable_0.3.0        
-#> [13] pkgconfig_2.0.3      rlang_0.4.8          rstudioapi_0.11     
-#> [16] cli_2.1.0            shiny_1.5.0          yaml_2.2.1          
-#> [19] parallel_4.0.2       LaplacesDemon_16.1.4 xfun_0.18           
-#> [22] fastmap_1.0.1        gridExtra_2.3        stringr_1.4.0       
-#> [25] knitr_1.30           htmlwidgets_1.5.2    vctrs_0.3.4         
-#> [28] hms_0.5.3            diptest_0.75-7       grid_4.0.2          
-#> [31] DT_0.16              glue_1.4.2           data.table_1.13.2   
-#> [34] R6_2.4.1             fansi_0.4.1          rmarkdown_2.5       
-#> [37] farver_2.0.3         ggplot2_3.3.2        purrr_0.3.4         
-#> [40] readr_1.4.0          magrittr_1.5         promises_1.1.1      
-#> [43] scales_1.1.1         htmltools_0.5.0      ellipsis_0.3.1      
-#> [46] assertthat_0.2.1     rlist_0.4.6.1        xtable_1.8-4        
-#> [49] mime_0.9             colorspace_1.4-1     httpuv_1.5.4        
-#> [52] labeling_0.4.2       stringi_1.5.3        munsell_0.5.0       
-#> [55] crayon_1.3.4
+#>  [7] digest_0.6.25        mclust_5.4.6         evaluate_0.14       
+#> [10] lifecycle_0.2.0      tibble_3.0.3         gtable_0.3.0        
+#> [13] pkgconfig_2.0.3      rlang_0.4.7          shiny_1.5.0         
+#> [16] yaml_2.2.1           parallel_4.0.2       LaplacesDemon_16.1.4
+#> [19] xfun_0.18            fastmap_1.0.1        gridExtra_2.3       
+#> [22] stringr_1.4.0        knitr_1.30           htmlwidgets_1.5.2   
+#> [25] vctrs_0.3.4          hms_0.5.3            diptest_0.75-7      
+#> [28] grid_4.0.2           DT_0.15              glue_1.4.2          
+#> [31] data.table_1.13.0    R6_2.4.1             rmarkdown_2.4       
+#> [34] farver_2.0.3         ggplot2_3.3.2        purrr_0.3.4         
+#> [37] readr_1.3.1          magrittr_1.5         promises_1.1.1      
+#> [40] scales_1.1.1         htmltools_0.5.0      ellipsis_0.3.1      
+#> [43] rlist_0.4.6.1        xtable_1.8-4         mime_0.9            
+#> [46] colorspace_1.4-1     httpuv_1.5.4         labeling_0.3        
+#> [49] stringi_1.5.3        munsell_0.5.0        crayon_1.3.4
 ```

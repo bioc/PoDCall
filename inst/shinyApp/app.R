@@ -182,27 +182,13 @@ server <- function(input, output, session) {
 
     ssData <- reactive({
 
-        ## Create vectors to hold sample information
-        sample_id <- character(length(plateList()))
-        target_assay <- character(length(plateList()))
-        ctrl_assay <- character(length(plateList()))
-
         ## File object
         inFile <- input$ssFile
 
-        ## Get row identifiers from uploaded data
-        well_id <- names(plateList())
+        ## Import sample sheet data
+        ssData <- importSampleSheet(sampleSheet=inFile$datapath[1],
+                                    well_id=names(plateList()))
 
-        if(!is.null(inFile)){
-            ssData <- importSampleSheet(sampleSheet=inFile$datapath[1],
-                                        well_id=well_id)
-
-            sample_id <- ssData[, "sample_id"]
-            target_assay <- ssData[, "target_assay"]
-            ctrl_assay <- ssData[, "ctrl_assay"]
-        }
-
-        data.frame(sample_id, target_assay, ctrl_assay)
     })
 
     ## Calculate the results/thresholds

@@ -60,17 +60,14 @@ importSampleSheet <- function(sampleSheet=NULL, well_id=NULL){
             ssDf <- data.frame(ssTable[,c("Well", "Sample",
                                         "TargetType", "Target")],
                                 stringsAsFactors=FALSE)
-
             ## Order by well
             ssDfOrdered <- ssDf[order(ssDf$Well),]
-
             ## Get columns with relevant information
             ssDfCh1 <-
                 ssDfOrdered[which(ssDfOrdered$TargetType == "Ch1Unknown"),]
             ctrlAssayAll <-
                 ssDfOrdered[which(ssDfOrdered$TargetType == "Ch2Unknown"),
                             "Target"]
-
             ## Get rows corresponding with amplitude files
             ssRows <- match(well_id, ssDfCh1$Well)
             sample_id <- ssDfCh1[ssRows, "Sample"]

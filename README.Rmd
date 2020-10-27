@@ -42,7 +42,7 @@ For more details on the concepts of PoDCall, see the application note.
 
 
 ## Input Data
-The input data is .csv-files exported from from 'QuantaSoft', and each file 
+The input data is .csv-files exported from 'QuantaSoft', and each file 
 contains the amplitude values of droplets from one well of a 96 well plate.
 The first two columns of the files should have headers 'Ch1 Amplitude' and 
 'Ch2 Amplitude'. To read in data, use the function importAmplitudeData, which 
