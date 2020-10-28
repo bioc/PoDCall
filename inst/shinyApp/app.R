@@ -159,9 +159,19 @@ server <- function(input, output, session) {
                     function(x) x[length(x) -1]))
 
         ## Read files and store in list
-        plateData <- lapply(inFile$datapath, function(x)
-            read.csv(x, header=TRUE, sep=",",
-                    col.names=c("Ch1", "Ch2", "cluster"))[1:2])
+        plateData <- mapply(function(x, i){
+            wellData <- utils::read.csv(x, header=TRUE, sep=",",
+                            col.names=c("Ch1", "Ch2", "cluster"))[seq_len(2)]
+            if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1])
+                | TRUE %in% (wellData[, 1] < 0))
+                showNotification(paste0("Check channel 1 values in file: ", i),
+                                 duration=NULL, type="warning")
+            if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2])
+                | TRUE %in% (wellData[, 2] < 0))
+              showNotification(paste0("Check channel 2 values in file: ", i),
+                               duration=NULL, type="warning")
+            return(list(wellData))
+        }, x=inFile$datapath, i=inFile$name)
 
         ## Set well ID as names for data frames holding amplitude data
         names(plateData) <- well_id
