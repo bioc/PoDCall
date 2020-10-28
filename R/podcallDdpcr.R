@@ -73,9 +73,8 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=400, Q=9,
         dataDirectory <- paste(pathString[[1]][-length(pathString[[1]])],
                                 collapse = "")}
     ## Generate result directory
-    if(resultsToFile | plots){
-        resDir <- paste(dataDirectory,"results/", sep="_")
-        dir.create(resDir, showWarnings=TRUE)}
+    if(resultsToFile | plots){resDir <- paste(dataDirectory,"results/", sep="_")
+                                dir.create(resDir, showWarnings=TRUE)}
 
     ############################### READ IN DATA ###############################
     ## Read in amplitude data from file(s) and store as list.
@@ -114,11 +113,9 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=400, Q=9,
                 ## Plot title
                 id <- paste(i, ", ", thrRes[i, "sample_id"], ", ",
                             thrRes[i, c("target_assay", "ctrl_assay")[k]])
-
                 ## File name, plot
                 outputname <- paste(i, thrRes[i, "sample_id"],
                                     c("target.pdf", "control.pdf")[k], sep="_")
-
                 ## Write scatter plot and histogram to file
                 grDevices::pdf(paste(resDir, outputname,sep=""))
                 podcallChannelPlot(channelData=stats::na.omit(x[, k]),

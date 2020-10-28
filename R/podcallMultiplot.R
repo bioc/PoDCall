@@ -60,9 +60,7 @@ podcallMultiplot <- function(plateData, thresholds, channel){
     dd <- plateChStacked[rows, ]
     thrDfCh <- thrDf[, c(c("thr_target", "thr_ctrl")[channel], "wellID")]
     colnames(thrDfCh)[1] <- "thrCh"
-
-    ## Colors to be used for target channel and control channel, respectively
-    chCol <- c("dodgerblue3", "forestgreen")
+    chCol <- c("dodgerblue3", "forestgreen") # Plot color for channels
 
     ## Work-around for "no visible binding for global variable NOTE
     Amplitudes <- NULL; wellID <- NULL; thrCh <- NULL

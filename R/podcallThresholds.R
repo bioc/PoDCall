@@ -1,6 +1,4 @@
-# Function sets threshold per channel per well and calulates concentrations.
-# Results are returned as a table.
-
+#
 #' @title podcallThresholds
 #'
 #' @description Function sets threshold per channel per well and calculates
@@ -54,8 +52,8 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=400, Q=9,
     message("Setting global threshold channel 1")
     targetExtract <- purrr::map(plateData, 1)
     targetModeReference <- getMode(targetExtract[[refWell]])
-    targetAmpScaled <- lapply(targetExtract, function(X){delta <-
-        targetModeReference-getMode(X); return(X+delta)})
+    targetAmpScaled <- lapply(targetExtract, function(X){
+        delta <- targetModeReference-getMode(X); return(X+delta)})
     targetAmpScaled <- sort(na.omit(unlist(targetAmpScaled)))
 
     ## Progress output for shiny app
@@ -76,10 +74,9 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=400, Q=9,
         refModeReference <- refQuantile[2]
         refQuantileLow <- round(refQuantile[1])
         refQuantileHigh <- round(refQuantile[3])
-        refExtract <-
-            refExtract[which(lapply(refExtract, FUN=function(X){
-                getMode(X) > refQuantileLow &
-                    getMode(X) < refQuantileHigh}) == TRUE)]
+        refExtract <- refExtract[which(lapply(refExtract, FUN=function(X){
+                                getMode(X) > refQuantileLow &
+                                getMode(X) < refQuantileHigh}) == TRUE)]
         refAmpScaled <- lapply(refExtract, function(X){
             delta <- refModeReference-getMode(X); return(X+delta)})
         refAmpScaled <- sort(unlist(refAmpScaled))
@@ -153,7 +150,7 @@ thr.multimodal <- function(component, densityEstimate){
 }
 
 ## Get mode
-getMode <- function(num) {
+getMode <- function(num){
     return(suppressWarnings(sort(LaplacesDemon::Modes(num)$modes)[[1]]))
 }
 
