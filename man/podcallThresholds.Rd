@@ -6,7 +6,7 @@
 \usage{
 podcallThresholds(plateData,
                         nchannels=c(1,2)[2],
-                        B=400,
+                        B=200,
                         Q=9,
                         refWell=1,
                         updateProgress=NULL)
@@ -17,7 +17,7 @@ podcallThresholds(plateData,
 \item{nchannels}{Number of channels used in the experiment (default=2)}
 
 \item{B}{Number of permutations for the Likelihood Ratio Test (LRT)
-(default=400)}
+(default=200)}
 
 \item{Q}{Parameter for outlier calling (default=9)}
 

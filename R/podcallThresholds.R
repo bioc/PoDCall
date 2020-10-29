@@ -7,7 +7,7 @@
 #' @param plateData List of data frames with amplitude data from a 96 well plate
 #' @param nchannels Number of channels used in the experiment (default=2)
 #' @param B Number of permutations for the Likelihood Ratio Test (LRT)
-#'     (default=400)
+#'     (default=200)
 #' @param Q Parameter for outlier calling (default=9)
 #' @param refWell reference well to calculate the shift in baseline (default=1)
 #' @param updateProgress function to update progress bar in shiny app
@@ -24,7 +24,7 @@
 #'
 #' @usage podcallThresholds(plateData,
 #'                         nchannels=c(1,2)[2],
-#'                         B=400,
+#'                         B=200,
 #'                         Q=9,
 #'                         refWell=1,
 #'                         updateProgress=NULL)
@@ -40,7 +40,7 @@
 #' thresholds <- podcallThresholds(plateData=dataList,
 #'                                 B=200)
 #'
-podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=400, Q=9,
+podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
                             refWell=1, updateProgress=NULL){
 
     ## Check arguments

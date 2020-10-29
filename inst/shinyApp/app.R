@@ -28,7 +28,7 @@ library(DT)
                                       ".csv"),
                               multiple=FALSE),
                   tags$hr(),
-                  numericInput("BInput", "Number of permutations", 400),
+                  numericInput("BInput", "Number of permutations", 200),
                   numericInput("QInput", "Q (For determining outliers)", 9),
                   actionButton("goButton", "Set thresholds")
                 ),

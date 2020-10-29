@@ -6,7 +6,7 @@
 \usage{
 podcallDdpcr(dataDirectory,
                     sampleSheetFile=NULL,
-                    B=400,
+                    B=200,
                     Q=9,
                     refwell=1,
                     ch2=TRUE,
@@ -25,7 +25,7 @@ ddPCR experiment. This file must be a comma separated file containing the
 following columns: Well, Sample, TargetType and Target.}
 
 \item{B}{The number of permutations used for the Likelihood Ratio Test
-(default=400)}
+(default=200)}
 
 \item{Q}{A parameter for calling outliers (default=9)}
 

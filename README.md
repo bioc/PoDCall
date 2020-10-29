@@ -110,7 +110,7 @@ package, which can be found using `system.file("extdata",
 
 The number of permutations used by the likelihood ratio test (LRT) which
 decides the number of components in the model fitted from the data.
-Default value `B=400`.
+Default value `B=200`.
 
 ### Q
 
