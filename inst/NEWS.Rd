@@ -4,5 +4,5 @@
 
 \section{Changes in version 0.99.0 (2020-11-10)}{
 \itemize{
-    \item Uploaded GitHub repository
+    \item Submitted to Bioconductor
 }}
