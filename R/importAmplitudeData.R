@@ -50,10 +50,10 @@ importAmplitudeData <- function(dataDirectory){
         wellData <- utils::read.csv(x, header=TRUE, sep=",",
                             col.names=c("Ch1", "Ch2", "cluster"))[seq_len(2)]
         if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]) |
-           TRUE %in% (wellData[, 1] < 0))
+            TRUE %in% (wellData[, 1] < 0))
             warning(paste0("Check values of channel 1 in file: ", x))
         if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2]) |
-           TRUE %in% (wellData[, 2] < 0))
+            TRUE %in% (wellData[, 2] < 0))
             warning(paste0("Check values of channel 2 in file: ", x))
         return(wellData)
     })
