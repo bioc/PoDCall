@@ -42,6 +42,6 @@ dataList <- importAmplitudeData(dataDirectory=dataPath)
 
 ## Set thresholds
 thresholds <- podcallThresholds(plateData=dataList,
-                                B=200)
+                                B=100)
 
 }

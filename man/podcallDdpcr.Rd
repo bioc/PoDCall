@@ -63,6 +63,6 @@ ssPath <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 ## Run PodCall
 podcallResults <- podcallDdpcr(dataDirectory=dataPath,
                                 sampleSheetFile=ssPath,
-                                B=200)
+                                B=100)
 
 }

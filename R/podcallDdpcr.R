@@ -55,7 +55,7 @@
 #' ## Run PodCall
 #' podcallResults <- podcallDdpcr(dataDirectory=dataPath,
 #'                                 sampleSheetFile=ssPath,
-#'                                 B=200)
+#'                                 B=100)
 #'
 podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
                         refwell=1, ch2=TRUE, resultsToFile=FALSE, plots=FALSE){

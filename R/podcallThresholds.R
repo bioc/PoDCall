@@ -38,7 +38,7 @@
 #'
 #' ## Set thresholds
 #' thresholds <- podcallThresholds(plateData=dataList,
-#'                                 B=200)
+#'                                 B=100)
 #'
 podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
                             refWell=1, updateProgress=NULL){

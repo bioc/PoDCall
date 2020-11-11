@@ -7,7 +7,7 @@ test_that("Whether threshold table is returned correctly",{
     amplitudeData <- importAmplitudeData(dataPath)
 
     ## Read sample sheet
-    thresholdTable <- podcallThresholds(plateData=amplitudeData)
+    thresholdTable <- podcallThresholds(plateData=amplitudeData, B=100)
 
     expect_is(thresholdTable, class="data.frame")
     expect_equal(nrow(thresholdTable), length(amplitudeData))
