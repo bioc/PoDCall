@@ -152,7 +152,7 @@ created if only `plots=TRUE`.
 
 ### resPath
 Optional argument to specify a directory for writing results file(s) to other 
-than the results directory created by default. Requires `resultsToFil=TRUE`.
+than the results directory created by default. Requires `resultsToFile=TRUE`.
 
 
 ## Threshold table columns

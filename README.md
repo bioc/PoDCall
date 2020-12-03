@@ -53,9 +53,14 @@ missing).
 
 The released version of PoDCall can not yet be installed from
 [BIOCONDUCTOR](http://bioconductor.org/), but for now it can be
-installed from GitHub or from a source file using:
+installed from GitHub or from a source file.
 
 ``` r
+## Install PoDCall from Bioconductor
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("PoDCall")
 
 ## Install PoDCall from GitHub
 install.packages("devtools")
@@ -149,6 +154,12 @@ The user can choose to make plots that are written to file by setting
 `plots=TRUE` (default: `plots=FALSE`). Plots will be saved to the
 results directory created when `resultsToFile=TRUE`. The results
 directory will also be created if only `plots=TRUE`.
+
+### resPath
+
+Optional argument to specify a directory for writing results file(s) to
+other than the results directory created by default. Requires
+`resultsToFile=TRUE`.
 
 ## Threshold table columns
 
