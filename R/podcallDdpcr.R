@@ -25,6 +25,8 @@
 #' @param ch2 Logical argument to denote channel 2 amplitudes (default=TRUE)
 #' @param resultsToFile Should results be written to file(.csv)? (default=FALSE)
 #' @param plots Should plots be created and written to file? (default=FALSE)
+#' @param resPath Optional argument to provide results directory path
+#'     (default=NULL)
 #'
 #' @return The function returns a table (data frame) with thresholds,
 #'     droplet counts, concentration and normalized concentration.
@@ -44,7 +46,8 @@
 #'                     refwell=1,
 #'                     ch2=TRUE,
 #'                     resultsToFile=FALSE,
-#'                     plots=FALSE)
+#'                     plots=FALSE,
+#'                     resPath=NULL)
 #'
 #' @examples
 #'
@@ -58,7 +61,8 @@
 #'                                 B=100)
 #'
 podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
-                        refwell=1, ch2=TRUE, resultsToFile=FALSE, plots=FALSE){
+                        refwell=1, ch2=TRUE, resultsToFile=FALSE, plots=FALSE,
+                        resPath=NULL){
 
     ## Check arguments
     checkArgumentsDdpcr(dataDirectory, sampleSheetFile, ch2,
@@ -72,10 +76,12 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
     if(utils::tail(pathString[[1]][length(pathString[[1]])]) == "/"){
         dataDirectory <- paste(pathString[[1]][-length(pathString[[1]])],
                                 collapse = "")}
-    ## Generate result directory
-    if(resultsToFile | plots){resDir <- paste(dataDirectory,"results/", sep="_")
-                                dir.create(resDir, showWarnings=TRUE)}
-
+    ## Generate result directory if path not provided
+    if(is.null(resPath) & (resultsToFile | plots)){
+        resDir <- paste(dataDirectory,"results/", sep="_")
+                                dir.create(resDir, showWarnings=TRUE)
+    }else {resDir <- resPath}
+    
     ############################### READ IN DATA ###############################
     ## Read in amplitude data from file(s) and store as list.
     plateData <- importAmplitudeData(dataDirectory)
@@ -103,7 +109,7 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
     ## Write results to result-file
     if(resultsToFile){
         utils::write.table(data.frame("Well_ID"=names(plateData), thrRes),
-                            file=paste(resDir, resFilename, sep=""),
+                            file=file.path(resDir, resFilename),
                             row.names=FALSE, quote=FALSE, sep=",")
     }
     ################################ MAKE PLOTS ################################

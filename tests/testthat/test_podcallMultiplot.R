@@ -11,6 +11,7 @@ test_that("Whether comparison plot is created correctly",{
     ch <- 1 # target channel
 
     ## Get relevant thresholds (see ?thrTable)
+    data("thrTable")
     thr <- thrTable[wells, c("thr_target", "thr_ctrl")]
 
     ## Create plot

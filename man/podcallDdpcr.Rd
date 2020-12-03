@@ -11,7 +11,8 @@ podcallDdpcr(dataDirectory,
                     refwell=1,
                     ch2=TRUE,
                     resultsToFile=FALSE,
-                    plots=FALSE)
+                    plots=FALSE,
+                    resPath=NULL)
 }
 \arguments{
 \item{dataDirectory}{Path to directory containing QuantaSoft amplitude files
@@ -36,6 +37,9 @@ following columns: Well, Sample, TargetType and Target.}
 \item{resultsToFile}{Should results be written to file(.csv)? (default=FALSE)}
 
 \item{plots}{Should plots be created and written to file? (default=FALSE)}
+
+\item{resPath}{Optional argument to provide results directory path
+(default=NULL)}
 }
 \value{
 The function returns a table (data frame) with thresholds,

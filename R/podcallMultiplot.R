@@ -23,7 +23,8 @@
 #'
 #' ## Read in data files
 #' data <- importAmplitudeData(path)
-#'
+#' data("thrTable")
+#' 
 #' ## Create plot using threshold from thrTable, see ?thrTable
 #' plot <- podcallMultiplot(plateData=data,
 #'                         thresholds=thrTable[names(data), ],

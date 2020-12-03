@@ -113,7 +113,7 @@ thr.unimodal <- function(component, Q){
                                             upper=TRUE, Q=Q)$cutoff)-1)]),
                     max(component))
 
-    message(paste("Global threshold set to: ", thr, sep=""))
+    message("Global threshold set to: ", thr)
 
     return(list(threshold=thr))
 }
@@ -145,7 +145,7 @@ thr.multimodal <- function(component, densityEstimate){
     #set the threshold as the median of the 2 components
     thr <- mean(c(mod1,mod2))
 
-    message(paste("Global threshold set to: ", thr, sep=""))
+    message("Global threshold set to: ", thr)
     return(list(threshold=thr, firstMod=mod1))
 }
 

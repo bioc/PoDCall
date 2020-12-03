@@ -43,8 +43,8 @@ importAmplitudeData <- function(dataDirectory){
                 function(x) x[length(x) -1]))
 
     ## Full paths to amplitude files
-    filenames <- paste(dataDirectory, amplitudeFiles, sep="/")
-
+    filenames <- file.path(dataDirectory, amplitudeFiles)
+    
     ## Read files and store in list
     plateData <- lapply(filenames, function(x){
         wellData <- utils::read.csv(x, header=TRUE, sep=",",

@@ -7,6 +7,7 @@ test_that("Whether histogram is created correctly",{
     amplitudeData <- importAmplitudeData(dataPath)
 
     ## Read in threshold table calculated from the data
+    data("thrTable")
     thresholdTable <- thrTable
 
     ## Select a well and channel to plot
