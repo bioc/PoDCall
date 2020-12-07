@@ -28,6 +28,7 @@ path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 ## Read in data
 data <- importAmplitudeData(path)
+data("thrTable")
 
 ## Get name of first list element and use as well ID
 well_id <- names(data)[1]

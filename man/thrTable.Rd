@@ -25,7 +25,7 @@ A \code{data.frame} with 12 columns, which are:
 In-house cell-line experiment.
 }
 \usage{
-thrTable
+data("thrTable")
 }
 \description{
 A \code{data.frame} that contains the results of running PodCall

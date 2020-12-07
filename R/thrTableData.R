@@ -22,6 +22,7 @@
 #' }
 #'
 #' @source In-house cell-line experiment.
-#'
+#' 
+#' @usage data("thrTable")
 #'
 "thrTable"

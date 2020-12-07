@@ -166,6 +166,7 @@ podcallHistogram <- function(channelData, thr, channel, plotId=NULL){
 #'
 #' ## Read in data
 #' data <- importAmplitudeData(path)
+#' data("thrTable")
 #'
 #' ## Get name of first list element and use as well ID
 #' well_id <- names(data)[1]
