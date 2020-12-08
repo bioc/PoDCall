@@ -2,6 +2,16 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 0.99.3 (2020-11-11)}{
+\itemize{
+    \item Minor code changes as suggested by Bioconductor reviewer
+}}
+
+\section{Changes in version 0.99.2 (2020-11-11)}{
+\itemize{
+    \item Changed arguments in examples to run faster
+}}
+
 \section{Changes in version 0.99.1 (2020-11-11)}{
 \itemize{
     \item Removed .Rproj file from repository
