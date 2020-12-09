@@ -2,7 +2,12 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
-\section{Changes in version 0.99.3 (2020-11-11)}{
+\section{Changes in version 0.99.4 (2020-12-09)}{
+\itemize{
+    \item Changed R version dependency to >= 4.1 (R-devel)
+}}
+
+\section{Changes in version 0.99.3 (2020-12-081)}{
 \itemize{
     \item Minor code changes as suggested by Bioconductor reviewer
 }}

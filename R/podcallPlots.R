@@ -100,7 +100,7 @@ podcallScatterplot <- function(channelData, thr, channel, plotId=NULL){
 #' # Read in data
 #' data <- importAmplitudeData(path)
 #' data("thrTable")
-#' 
+#'
 #' # Get name of first list element and use as well ID
 #' well_id <- names(data)[1]
 #'
@@ -145,7 +145,7 @@ podcallHistogram <- function(channelData, thr, channel, plotId=NULL){
 
 ################################################################################
 
-#' @title podcallChannelPLot
+#' @title podcallChannelPlot
 #'
 #' @description Function that calls podcallScatterplot and podcallHistogram and
 #'     draws a plot with both scatter plot and histogram.

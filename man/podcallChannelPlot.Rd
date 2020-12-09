@@ -2,7 +2,7 @@
 % Please edit documentation in R/podcallPlots.R
 \name{podcallChannelPlot}
 \alias{podcallChannelPlot}
-\title{podcallChannelPLot}
+\title{podcallChannelPlot}
 \usage{
 podcallChannelPlot(channelData, thr, channel, plotId = NULL)
 }

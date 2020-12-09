@@ -1,7 +1,7 @@
 Package: PoDCall
 Type: Package
 Title: Positive Droplet Calling for DNA Methylation Droplet Digital PCR 
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(person("Hans Petter", "Brodal", 
                     role=c("aut", "cre"), 
                     email="hans.petter.brodal@rr-research.no"),
@@ -19,7 +19,7 @@ Description: Reads files exported from 'QuantaSoft' containing amplitude values
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-Depends: R (>= 4.0)
+Depends: R (>= 4.1)
 Imports: 
     ggplot2,
     gridExtra,

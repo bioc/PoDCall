@@ -196,7 +196,7 @@ $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400$
 
 # PoDCall functions
 
-`podcall_ddpcr()` is the main wrapper function that returns a table with the 
+`podcallDdpcr()` is the main wrapper function that returns a table with the 
 results of PoDCall to the user. This function uses a set of functions that read 
 the amplitude data from file, set thresholds and make plots. All functions 
 involved can be used individually should the user only want to use some of the 
@@ -255,7 +255,7 @@ thresholdTable <- podcallThresholds(plateData=ampData)
 print(thresholdTable)
 ```
 
-## `podcallPlots()`
+## `podcallChannelPlot()`
 Takes the threshold and amplitude values corresponding to a channel of a well as
 arguments, calls functions that makes scatter plot and histogram and draws a 
 plot with both.

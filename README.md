@@ -214,7 +214,7 @@ Normalized concentration, calculated by the formula
 
 # PoDCall functions
 
-`podcall_ddpcr()` is the main wrapper function that returns a table with
+`podcallDdpcr()` is the main wrapper function that returns a table with
 the results of PoDCall to the user. This function uses a set of
 functions that read the amplitude data from file, set thresholds and
 make plots. All functions involved can be used individually should the
@@ -297,7 +297,7 @@ thresholdTable <- podcallThresholds(plateData=ampData)
 print(thresholdTable)
 ```
 
-## `podcallPlots()`
+## `podcallChannelPlot()`
 
 Takes the threshold and amplitude values corresponding to a channel of a
 well as arguments, calls functions that makes scatter plot and histogram
@@ -474,40 +474,40 @@ document was compiled
 
 ``` r
 sessionInfo()
-#> R version 4.0.3 (2020-10-10)
+#> R Under development (unstable) (2020-12-07 r79587)
 #> Platform: x86_64-w64-mingw32/x64 (64-bit)
-#> Running under: Windows 10 x64 (build 19041)
+#> Running under: Windows 7 x64 (build 7601) Service Pack 1
 #> 
 #> Matrix products: default
 #> 
 #> locale:
-#> [1] LC_COLLATE=Norwegian Bokmål_Norway.1252 
-#> [2] LC_CTYPE=Norwegian Bokmål_Norway.1252   
-#> [3] LC_MONETARY=Norwegian Bokmål_Norway.1252
-#> [4] LC_NUMERIC=C                            
-#> [5] LC_TIME=Norwegian Bokmål_Norway.1252    
+#> [1] LC_COLLATE=Norwegian (Bokmål)_Norway.1252 
+#> [2] LC_CTYPE=Norwegian (Bokmål)_Norway.1252   
+#> [3] LC_MONETARY=Norwegian (Bokmål)_Norway.1252
+#> [4] LC_NUMERIC=C                              
+#> [5] LC_TIME=Norwegian (Bokmål)_Norway.1252    
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_0.99.2
+#> [1] PoDCall_0.99.3
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Rcpp_1.0.5           later_1.1.0.1        compiler_4.0.3      
-#>  [4] pillar_1.4.6         shinyjs_2.0.0        tools_4.0.3         
-#>  [7] digest_0.6.27        mclust_5.4.6         evaluate_0.14       
+#>  [1] Rcpp_1.0.5           later_1.1.0.1        compiler_4.1.0      
+#>  [4] pillar_1.4.7         shinyjs_2.0.0        tools_4.1.0         
+#>  [7] digest_0.6.27        mclust_5.4.7         evaluate_0.14       
 #> [10] lifecycle_0.2.0      tibble_3.0.4         gtable_0.3.0        
-#> [13] pkgconfig_2.0.3      rlang_0.4.8          rstudioapi_0.12     
-#> [16] cli_2.1.0            shiny_1.5.0          yaml_2.2.1          
-#> [19] parallel_4.0.3       LaplacesDemon_16.1.4 xfun_0.19           
+#> [13] pkgconfig_2.0.3      rlang_0.4.9          rstudioapi_0.13     
+#> [16] cli_2.2.0            shiny_1.5.0          yaml_2.2.1          
+#> [19] parallel_4.1.0       LaplacesDemon_16.1.4 xfun_0.19           
 #> [22] fastmap_1.0.1        gridExtra_2.3        stringr_1.4.0       
-#> [25] knitr_1.30           htmlwidgets_1.5.2    vctrs_0.3.4         
-#> [28] hms_0.5.3            diptest_0.75-7       grid_4.0.3          
-#> [31] DT_0.16              glue_1.4.2           data.table_1.13.2   
+#> [25] knitr_1.30           htmlwidgets_1.5.2    vctrs_0.3.5         
+#> [28] hms_0.5.3            diptest_0.75-7       grid_4.1.0          
+#> [31] DT_0.16              glue_1.4.2           data.table_1.13.4   
 #> [34] R6_2.5.0             fansi_0.4.1          rmarkdown_2.5       
 #> [37] farver_2.0.3         ggplot2_3.3.2        purrr_0.3.4         
-#> [40] readr_1.4.0          magrittr_1.5         promises_1.1.1      
+#> [40] readr_1.4.0          magrittr_2.0.1       promises_1.1.1      
 #> [43] scales_1.1.1         htmltools_0.5.0      ellipsis_0.3.1      
 #> [46] assertthat_0.2.1     rlist_0.4.6.1        xtable_1.8-4        
 #> [49] mime_0.9             colorspace_2.0-0     httpuv_1.5.4        
