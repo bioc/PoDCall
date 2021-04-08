@@ -4,12 +4,12 @@
 
 \section{Changes in version 0.99.6 (2021-04-06)}{
 \itemize{
-    \item Updated NEWS.Rd)
+    \item Updated NEWS.Rd
 }}
 
 \section{Changes in version 0.99.5 (2020-12-09)}{
 \itemize{
-    \item Corrected name of an author)
+    \item Corrected name of an author
 }}
 
 \section{Changes in version 0.99.4 (2020-12-09)}{
