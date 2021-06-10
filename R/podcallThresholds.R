@@ -47,8 +47,8 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
     if(!is.list(plateData)) stop("plateData must be a list")
     if(nchannels > 2 | nchannels < 1) stop("invalid number of channels")
 
-    ########################## Global thresholding #############################
-    ## Channel 1 (target channel)
+    ## Global threshold channel 1 (target channel)
+    if(sum(is.na(plateData[[refWell]][1]))<nrow(plateData[[refWell]])){
     message("Setting global threshold channel 1")
     targetExtract <- purrr::map(plateData, 1)
     targetModeReference <- getMode(targetExtract[[refWell]])
@@ -63,23 +63,17 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
     ## Global threshold target channel
     targetRes <- globalThresholding(scaledAmplitudeDist=targetAmpScaled,
                                     Q=Q, B=B, init=FALSE)
+    }else {
+        targetRes <- NA
+        targetModeReference <- NA
+    }
 
-    ## Channel 2 (control channel)
+    ## Global threhold channel 2 (control channel)
     message("Setting global threshold channel 2")
     if(is.na(plateData[[1]][1,2]) == FALSE){
         refExtract <- lapply(purrr::map(plateData, 2), function(X){
             return(sort(na.omit(X)))})
-        refQuantile <- stats::quantile(unlist(lapply(refExtract, getMode)),
-                                        probs=c(0.4, 0.5, 0.6))
-        refModeReference <- refQuantile[2]
-        refQuantileLow <- round(refQuantile[1])
-        refQuantileHigh <- round(refQuantile[3])
-        refExtract <- refExtract[which(lapply(refExtract, FUN=function(X){
-                                getMode(X) > refQuantileLow &
-                                getMode(X) < refQuantileHigh}) == TRUE)]
-        refAmpScaled <- lapply(refExtract, function(X){
-            delta <- refModeReference-getMode(X); return(X+delta)})
-        refAmpScaled <- sort(unlist(refAmpScaled))
+        refModeReference <- getMode(refExtract[[refWell]])
 
         ## Progress output for shiny app
         if(is.function(updateProgress)){
@@ -88,7 +82,7 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
         }
         ## Global threshold control channel
         refRes <-
-            globalThresholding(scaledAmplitudeDist=refAmpScaled,
+            globalThresholding(scaledAmplitudeDist=refExtract[[refWell]],
                                 Q=Q, B=B, init=TRUE)
     }
     #######################  Well-specific thresholding ########################
@@ -164,18 +158,15 @@ globalThresholding <- function(scaledAmplitudeDist, Q, B, init){
                 sort(sample(x=scaledAmplitudeDist, size=8000))}
         else{scaledAmplitudeDistSubset <- scaledAmplitudeDist}
         if(init == TRUE){
-            hc <- mclust::hc(scaledAmplitudeDistSubset,
-                            use="VARS",
+            hc <- mclust::hc(scaledAmplitudeDistSubset, use="VARS",
                             modelName="E")
             bBIC <- mclustBootstrapLRT(scaledAmplitudeDistSubset,
-                                        modelName="E",
-                                        nboot=B,
+                                        modelName="E", nboot=B,
                                         initialization=list(hcPairs=hc))
         }
         else{
             bBIC <- mclustBootstrapLRT(scaledAmplitudeDistSubset,
-                                        modelName="E",
-                                        nboot=B)
+                                        modelName="E", nboot=B)
         }
         comp <- suppressWarnings(max(which(bBIC$p.value < 0.05))) + 1
         if(is.infinite(comp)) {comp <- 1}
@@ -203,8 +194,9 @@ fillThrTable <- function(plateData, targetRes, targetModeReference,
 
     ## Populate result data frame
     thrRes[, "thr_target"] <- vapply(plateData, function(x){
-        delta <- targetModeReference-getMode(sort(na.omit(x[,"Ch1"])))
-        return(ceiling(targetRes$threshold - delta))}, numeric(1))
+        ifelse(is.na(targetRes), NA,
+            {delta <- targetModeReference-getMode(sort(na.omit(x[,"Ch1"])))
+            return(ceiling(targetRes$threshold - delta))})}, numeric(1))
 
     thrRes[, "thr_ctrl"] <- vapply(plateData, function(x){
         ifelse(is.na(x[1, "Ch2"]), NA,

@@ -2,6 +2,11 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.1.1 (2021-06-09)}{
+\itemize{
+    \item Implemented use of Reference well for control channel
+}}
+
 \section{Changes in version 0.99.6 (2021-04-06)}{
 \itemize{
     \item Updated NEWS.Rd
@@ -17,7 +22,7 @@
     \item Changed R version dependency to >= 4.1 (R-devel)
 }}
 
-\section{Changes in version 0.99.3 (2020-12-081)}{
+\section{Changes in version 0.99.3 (2020-12-08)}{
 \itemize{
     \item Minor code changes as suggested by Bioconductor reviewer
 }}
