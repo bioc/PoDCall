@@ -7,7 +7,7 @@ dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
 sampleSheet <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 
 # Set thresholds and calculate results
-thrTable <- podcall_ddpcr(dataDirectory=dataPath,
+thrTable <- podcallDdpcr(dataDirectory=dataPath,
                           sampleSheetFile=sampleSheet)
 
-usethis::use_data(thrTable, compress="xz")
+usethis::use_data(thrTable, compress="xz", overwrite=TRUE)

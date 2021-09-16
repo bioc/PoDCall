@@ -319,14 +319,20 @@ server <- function(input, output, session) {
 
                 c_tar <- signif((-log(neg_drop_tar/tot_droplets))/0.000851,
                                 digits=4)
-                c_norm <-
+                c_norm_4Plex <-
                     signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                         ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400,
                         digits=4)
 
+                c_norm_sg <-
+                  signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
+                            ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100,
+                         digits=4)
+
                 thresholds$df$pos_dr_target[i] <- pos_dr_tar
                 thresholds$df$c_target[i] <- c_tar
-                thresholds$df$c_norm[i] <- c_norm
+                thresholds$df$c_norm_4Plex[i] <- c_norm_4Plex
+                thresholds$df$c_norm_sg[i] <- c_norm_sg
                 thresholds$df$editedCh1[i] <- "yes"
 
             }
@@ -343,14 +349,20 @@ server <- function(input, output, session) {
 
                 c_ctrl <- signif((-log(neg_drop_ctrl/tot_droplets))/0.000851,
                             digits=4)
-                c_norm <-
+                c_norm_4Plex <-
                     signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                         ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400,
                         digits=4)
 
+                c_norm_sg <-
+                    signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
+                            ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100,
+                        digits=4)
+
                 thresholds$df$pos_dr_ctrl[i] <- pos_dr_ctrl
                 thresholds$df$c_ctrl[i] <- c_ctrl
-                thresholds$df$c_norm[i] <- c_norm
+                thresholds$df$c_norm_4Plex[i] <- c_norm_4Plex
+                thresholds$df$c_norm_sg[i] <- c_norm_sg
                 thresholds$df$editedCh2[i] <- "yes"
             }
         }
@@ -475,9 +487,12 @@ server <- function(input, output, session) {
             neg_drop_ctrl <- tot_droplets-thresholds$df[well, "pos_dr_ctrl"]
             thresholds$df[well,"c_target"] <-
                 signif((-log(neg_drop_tar/tot_droplets))/0.000851, digits=4)
-            thresholds$df[well, "c_norm"] <-
+            thresholds$df[well, "c_norm_4Plex"] <-
                 signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                 ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400, digits=4)
+            thresholds$df[well, "c_norm_sg"] <-
+                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
+                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
             thresholds$df[well, "editedCh1"] <- "yes"
         }else{
             thresholds$df[well, "thr_ctrl"] <- new_thr
@@ -488,9 +503,12 @@ server <- function(input, output, session) {
             neg_drop_ctrl <- tot_droplets-length(amp_ctrl[amp_ctrl>new_thr])
             thresholds$df[well, "c_ctrl"] <-
                 signif((-log(neg_drop_ctrl/tot_droplets))/0.000851, digits=4)
-            thresholds$df[well, "c_norm"] <-
+            thresholds$df[well, "c_norm_4Plex"] <-
                 signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                 ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400, digits=4)
+            thresholds$df[well, "c_norm_sg"] <-
+                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
+                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
             thresholds$df[well, "editedCh2"] <- "yes"
         }
     })

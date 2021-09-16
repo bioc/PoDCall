@@ -1,12 +1,14 @@
 Package: PoDCall
 Type: Package
 Title: Positive Droplet Calling for DNA Methylation Droplet Digital PCR 
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: c(person("Hans Petter", "Brodal", 
                     role=c("aut", "cre"), 
                     email="hans.petter.brodal@rr-research.no"),
             person("Marine", "Jeanmougin", role="aut", 
-                    email="marine.jeanmougin@rr-research.no"))
+                    email="marine.jeanmougin@rr-research.no"),
+            person("Guro Elisabeth", "Lind", role="aut", 
+                    email="guro.elisabeth.lind@rr-research.no"))
 Description: Reads files exported from 'QuantaSoft' containing amplitude values 
     from a run of ddPCR (96 well plate) and robustly sets thresholds to 
     determine positive droplets for each channel of each individual well. 

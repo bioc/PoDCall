@@ -5,7 +5,7 @@
 \alias{thrTable}
 \title{PoDCall Example Threshold Table}
 \format{
-A \code{data.frame} with 12 columns, which are:
+A \code{data.frame} with 13 columns, which are:
 \describe{
 \item{sample_id}{Sample ID}
 \item{thr_target}{Threshold channel 1 (target assay)}
@@ -15,7 +15,8 @@ A \code{data.frame} with 12 columns, which are:
 \item{tot_droplets}{Total droplets}
 \item{c_target}{Concentration target}
 \item{c_ctrl}{Concentration control}
-\item{c_norm}{Normalized concentration}
+\item{c_norm_4Plex}{Normalized concentration based on 4Plex control}
+\item{c_norm_sg}{Normalized concentration based on single gene control}
 \item{q}{Parameter Q for calling outliers}
 \item{target_assay}{Target assay}
 \item{ctrl_assay}{Control assay}

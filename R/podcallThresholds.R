@@ -186,11 +186,11 @@ fillThrTable <- function(plateData, targetRes, targetModeReference,
                         refRes, refModeReference){
 
     ## Create data frame to hold the results
-    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=8),
+    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=9),
                         row.names=names(plateData))
     colnames(thrRes) <- c("thr_target", "thr_ctrl", "pos_dr_target",
                         "pos_dr_ctrl", "tot_droplets", "c_target", "c_ctrl",
-                        "c_norm")
+                        "c_norm_4Plex", "c_norm_sg")
 
     ## Populate result data frame
     thrRes[, "thr_target"] <- vapply(plateData, function(x){
@@ -221,10 +221,15 @@ fillThrTable <- function(plateData, targetRes, targetModeReference,
     thrRes[, "c_ctrl"] <-
         signif(-log((thrRes[, "tot_droplets"]-thrRes[, "pos_dr_ctrl"])/
                         thrRes[, "tot_droplets"])/cst, digits=4)
-    thrRes[, "c_norm"] <-
+    thrRes[, "c_norm_4Plex"] <-
         ifelse(thrRes[, "c_ctrl"] == 0, "No DNA",
                 signif((thrRes[, "c_target"]/thrRes[, "c_ctrl"])*400,
                         digits=4))
+
+    thrRes[, "c_norm_sg"] <-
+        ifelse(thrRes[, "c_ctrl"] == 0, "No DNA",
+               signif((thrRes[, "c_target"]/thrRes[, "c_ctrl"])*100,
+                      digits=4))
 
     return(thrRes)
 }

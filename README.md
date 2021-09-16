@@ -19,8 +19,9 @@ normalized concentration for each well. The resulting threshold table
 can optionally be written to file automatically by the main workflow
 function. PoDCall also offers functionality for plotting, both
 individual wells and multiple well plots. Plots for individual wells can
-be made and saved as .pdf-files as part of the main workflow function,
-or by calling the various plotting functions individually.
+be made and saved as .pdf-files as part of the main workflow function
+`podcallDdpcr()`, or by calling the various plotting functions
+individually.
 
 ## Gaussian Mixture Models
 
@@ -51,9 +52,8 @@ packages are not yet installed, the installation of PoDCall should take
 care of it (you will be prompted to install the packages that are
 missing).
 
-The released version of PoDCall can not yet be installed from
-[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be
-installed from GitHub or from a source file.
+The released version of PoDCall can be installed from
+[BIOCONDUCTOR](http://bioconductor.org/) using
 
 ``` r
 ## Install PoDCall from Bioconductor
@@ -68,7 +68,7 @@ devtools::install_github("HansPetterBrodal/PoDCall")
 
 ## Install PoDCall from source file
 install.packages("remotes")
-remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
+remotes::install_local("path/to/PoDCall_x.y.z.tar.gz")
 ```
 
 After installing PoDCall and the required packages, PoDCall can be
@@ -106,8 +106,8 @@ disabled by default.
 Path to sample sheet file. Must be a .csv file exported from QuantaSoft
 and must include the following columns: Well, Sample, TargetType and
 Target. The entries in the column TargetType must be either ‘Ch1Unknown’
-or Ch2Unknown, and is used to extract rows with information from either
-channel 1 or channel 2. An example file has been included in the
+or ‘Ch2Unknown’, and is used to extract rows with information from
+either channel 1 or channel 2. An example file has been included in the
 package, which can be found using `system.file("extdata",
 "Sample_names.csv", package="PoDCall")`
 
@@ -163,7 +163,7 @@ other than the results directory created by default. Requires
 
 ## Threshold table columns
 
-The table that is returned when running `podcall_ddpcr()` contains
+The table that is returned when running `podcallDdpcr()` contains
 columns with more or less self-explanatory column names, and well ID
 (well coordinates) as rownames:
 
@@ -195,7 +195,7 @@ Number of droplets.
 ### c\_target
 
 Concentration of target, calculated by the formula
-\(-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}\)
+\(-\ln\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}\)
 (where does 0.000851 come from from and what is the name of this
 parameter) where neg\_drop\_tar is number of negative droplets in
 channel 1 (target).
@@ -203,14 +203,19 @@ channel 1 (target).
 ### c\_ctrl
 
 Concentration of control, calculated by the formula
-\(-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}\)
+\(-\ln\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}\)
 where neg\_drop\_ctrl is number of negative droplets in channel 2
 (control).
 
-### c\_norm
+### c\_norm\_4Plex
 
-Normalized concentration, calculated by the formula
-\(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400\)
+Normalized concentration with 4Plex as control, calculated by the
+formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400\)
+
+### c\_norm\_sg
+
+Normalized concentration with single gene as control, calculated by the
+formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100\)
 
 # PoDCall functions
 
@@ -454,17 +459,17 @@ PoDCall is loaded, and is available as an object called `thrTable`. See
 ## The threshold table
 thrTable
 #>       sample_id thr_target thr_ctrl pos_dr_target pos_dr_ctrl tot_droplets
-#> A04      SW1463       2761     9157          2479       12887        18739
-#> B04       SW403       2739     8661           660        7459        16933
-#> D04       SW480       2863     8519            44        8336        11713
-#> D05 IVDZ_bisulf       2818     8502          1675        6573        12642
-#> H05         NTC       2823     7940             0           0        19638
-#>     c_target c_ctrl c_norm q target_assay ctrl_assay
-#> A04  166.700 1368.0  48.74 9          VIM   new4Plex
-#> B04   46.720  682.4  27.39 9          VIM   new4Plex
-#> D04    4.423 1461.0  1.211 9          VIM   new4Plex
-#> D05  167.000  862.3  77.47 9          VIM   new4Plex
-#> H05    0.000    0.0 No DNA 9          VIM   new4Plex
+#> A04      SW1463       2761     8750          2479       13190        18739
+#> B04       SW403       2739     8254           660        7789        16933
+#> D04       SW480       2863     8111            44        8509        11713
+#> D05 IVDZ_bisulf       2818     8095          1675        6823        12642
+#> H05         NTC       2823     7532             0          91        19638
+#>     c_target   c_ctrl c_norm_4Plex c_norm_sg q target_assay ctrl_assay
+#> A04  166.700 1430.000       46.630   11.6600 9          VIM   new4Plex
+#> B04   46.720  724.000       25.810    6.4530 9          VIM   new4Plex
+#> D04    4.423 1523.000        1.162    0.2904 9          VIM   new4Plex
+#> D05  167.000  911.700       73.270   18.3200 9          VIM   new4Plex
+#> H05    0.000    5.458        0.000    0.0000 9          VIM   new4Plex
 ```
 
 # Session info
@@ -474,7 +479,7 @@ document was compiled
 
 ``` r
 sessionInfo()
-#> R Under development (unstable) (2020-12-07 r79587)
+#> R version 4.1.0 (2021-05-18)
 #> Platform: x86_64-w64-mingw32/x64 (64-bit)
 #> Running under: Windows 7 x64 (build 7601) Service Pack 1
 #> 
@@ -491,26 +496,26 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_0.99.3
+#> [1] PoDCall_1.1.3
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Rcpp_1.0.5           later_1.1.0.1        compiler_4.1.0      
-#>  [4] pillar_1.4.7         shinyjs_2.0.0        tools_4.1.0         
-#>  [7] digest_0.6.27        mclust_5.4.7         evaluate_0.14       
-#> [10] lifecycle_0.2.0      tibble_3.0.4         gtable_0.3.0        
-#> [13] pkgconfig_2.0.3      rlang_0.4.9          rstudioapi_0.13     
-#> [16] cli_2.2.0            shiny_1.5.0          yaml_2.2.1          
-#> [19] parallel_4.1.0       LaplacesDemon_16.1.4 xfun_0.19           
-#> [22] fastmap_1.0.1        gridExtra_2.3        stringr_1.4.0       
-#> [25] knitr_1.30           htmlwidgets_1.5.2    vctrs_0.3.5         
-#> [28] hms_0.5.3            diptest_0.75-7       grid_4.1.0          
-#> [31] DT_0.16              glue_1.4.2           data.table_1.13.4   
-#> [34] R6_2.5.0             fansi_0.4.1          rmarkdown_2.5       
-#> [37] farver_2.0.3         ggplot2_3.3.2        purrr_0.3.4         
-#> [40] readr_1.4.0          magrittr_2.0.1       promises_1.1.1      
-#> [43] scales_1.1.1         htmltools_0.5.0      ellipsis_0.3.1      
-#> [46] assertthat_0.2.1     rlist_0.4.6.1        xtable_1.8-4        
+#>  [1] Rcpp_1.0.5           highr_0.9            later_1.1.0.1       
+#>  [4] compiler_4.1.0       pillar_1.6.1         shinyjs_2.0.0       
+#>  [7] tools_4.1.0          digest_0.6.27        mclust_5.4.7        
+#> [10] evaluate_0.14        lifecycle_1.0.0      tibble_3.0.4        
+#> [13] gtable_0.3.0         pkgconfig_2.0.3      rlang_0.4.11        
+#> [16] rstudioapi_0.13      cli_2.5.0            shiny_1.6.0         
+#> [19] yaml_2.2.1           parallel_4.1.0       LaplacesDemon_16.1.4
+#> [22] xfun_0.23            fastmap_1.0.1        gridExtra_2.3       
+#> [25] stringr_1.4.0        knitr_1.33           htmlwidgets_1.5.3   
+#> [28] vctrs_0.3.8          hms_1.1.0            diptest_0.75-7      
+#> [31] grid_4.1.0           DT_0.18              data.table_1.13.4   
+#> [34] glue_1.4.2           R6_2.5.0             fansi_0.5.0         
+#> [37] rmarkdown_2.8        farver_2.1.0         ggplot2_3.3.3       
+#> [40] purrr_0.3.4          readr_1.4.0          magrittr_2.0.1      
+#> [43] promises_1.1.1       scales_1.1.1         htmltools_0.5.1.1   
+#> [46] ellipsis_0.3.2       rlist_0.4.6.1        xtable_1.8-4        
 #> [49] mime_0.9             colorspace_2.0-0     httpuv_1.5.4        
-#> [52] labeling_0.4.2       stringi_1.5.3        munsell_0.5.0       
-#> [55] crayon_1.3.4
+#> [52] labeling_0.4.2       utf8_1.2.1           stringi_1.6.1       
+#> [55] munsell_0.5.0        crayon_1.4.1
 ```

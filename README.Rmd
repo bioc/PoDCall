@@ -29,8 +29,8 @@ concentration for each well. The resulting threshold table can optionally be
 written to file automatically by the main workflow function. 
 PoDCall also offers functionality for plotting, both individual wells and 
 multiple well plots. Plots for individual wells can be made and saved as 
-.pdf-files as part of the main workflow function, or by calling the various 
-plotting functions individually. 
+.pdf-files as part of the main workflow function `podcallDdpcr()`, or by calling 
+the various plotting functions individually. 
 
 ## Gaussian Mixture Models
 DdPCR experiments generate a mixture of droplets, positive droplets which 
@@ -57,9 +57,8 @@ PoDCall requires some packages to be installed, and if any required packages are
 not yet installed, the installation of PoDCall should take care of it (you will 
 be prompted to install the packages that are missing).   
 
-The released version of PoDCall can not yet be installed from 
-[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be installed 
-from GitHub or from a source file.
+The released version of PoDCall can be installed from 
+[BIOCONDUCTOR](http://bioconductor.org/) using
 
 ``` {r installation, eval=FALSE}
 ## Install PoDCall from Bioconductor
@@ -74,7 +73,7 @@ devtools::install_github("HansPetterBrodal/PoDCall")
 
 ## Install PoDCall from source file
 install.packages("remotes")
-remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
+remotes::install_local("path/to/PoDCall_x.y.z.tar.gz")
 
 ```
 After installing PoDCall and the required packages, PoDCall can be loaded with:
@@ -108,9 +107,9 @@ desired. For example to write results to file, which is disabled by default.
 ### sampleSheetFile 
 Path to sample sheet file. Must be a .csv file exported from QuantaSoft and must
 include the following columns: Well, Sample, TargetType and Target. The entries
-in the column TargetType must be either 'Ch1Unknown' or Ch2Unknown, and is used
-to extract rows with information from either channel 1 or channel 2. An example
-file has been included in the package, which can be found using 
+in the column TargetType must be either 'Ch1Unknown' or 'Ch2Unknown', and is 
+used to extract rows with information from either channel 1 or channel 2. 
+An example file has been included in the package, which can be found using 
 `system.file("extdata", "Sample_names.csv", package="PoDCall")`
 
 ### B 
@@ -156,7 +155,7 @@ than the results directory created by default. Requires `resultsToFile=TRUE`.
 
 
 ## Threshold table columns
-The table that is returned when running `podcall_ddpcr()` contains columns with 
+The table that is returned when running `podcallDdpcr()` contains columns with 
 more or less self-explanatory column names, and well ID (well coordinates) as
 rownames:
 
@@ -181,19 +180,22 @@ Number of droplets.
 
 ### c_target 
 Concentration of target, calculated by the formula 
-$-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
+$-\ln\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
 (where does 0.000851 come from from and what is the name of this parameter) 
 where neg_drop_tar is number of negative droplets in channel 1 (target).
 
 ### c_ctrl 
 Concentration of control, calculated by the formula 
-$-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}$ 
+$-\ln\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}$ 
 where neg_drop_ctrl is number of negative droplets in channel 2 (control).
 
-
-### c_norm 
-Normalized concentration, calculated by the formula 
+### c_norm_4Plex 
+Normalized concentration with 4Plex as control, calculated by the formula 
 $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400$
+
+### c_norm_sg 
+Normalized concentration with single gene as control, calculated by the formula 
+$\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100$
 
 
 # PoDCall functions
