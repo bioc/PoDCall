@@ -168,7 +168,8 @@ globalThresholding <- function(scaledAmplitudeDist, Q, B, init){
             bBIC <- mclustBootstrapLRT(scaledAmplitudeDistSubset,
                                         modelName="E", nboot=B)
         }
-        comp <- suppressWarnings(max(which(bBIC$p.value < 0.05))) + 1
+        comp <-
+            suppressWarnings(max(which(bBIC$p.value[seq_len(2)] < 0.05))) + 1
         if(is.infinite(comp)) {comp <- 1}
         if(comp == 1) {res <- thr.unimodal(scaledAmplitudeDist, Q = Q)}
         if(comp > 1) {
