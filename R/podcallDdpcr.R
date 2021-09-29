@@ -81,7 +81,7 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
         resDir <- paste(dataDirectory,"results/", sep="_")
                                 dir.create(resDir, showWarnings=TRUE)
     }else {resDir <- resPath}
-    
+
     ############################### READ IN DATA ###############################
     ## Read in amplitude data from file(s) and store as list.
     plateData <- importAmplitudeData(dataDirectory)
@@ -98,6 +98,7 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
                         q=rep(Q, length(plateData)),
                         target_assay=sampleSheet[,"target_assay"],
                         ctrl_assay=sampleSheet[,"ctrl_assay"],
+                        ref_well=names(plateData)[refwell],
                         stringsAsFactors=FALSE)
 
     ## Set file name for result-file

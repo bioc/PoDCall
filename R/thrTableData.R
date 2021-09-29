@@ -20,6 +20,7 @@
 #' \item{q}{Parameter Q for calling outliers}
 #' \item{target_assay}{Target assay}
 #' \item{ctrl_assay}{Control assay}
+#' \item{ref_well}{Reference well used to set threshold}
 #' }
 #'
 #' @source In-house cell-line experiment.

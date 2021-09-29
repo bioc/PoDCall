@@ -242,7 +242,9 @@ server <- function(input, output, session) {
                                     refWell=input$RefWell,
                                     updateProgress=updateProgress),
                     q,
-                    target_assay, ctrl_assay, editedCh1, editedCh2,
+                    target_assay, ctrl_assay,
+                    ref_well=names(plateList)[input$RefWell],
+                    editedCh1, editedCh2,
                     stringsAsFactors=FALSE)
     })
 

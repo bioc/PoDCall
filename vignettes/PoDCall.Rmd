@@ -194,6 +194,17 @@ $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400$
 Normalized concentration with single gene as control, calculated by the formula 
 $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100$
 
+### q
+The value used for Q
+
+### target_assay
+The assay used for target channel, provided via sample sheet.
+
+### ctrl_assay
+The assay used for control channel, provided via sample sheet.
+
+### ref_well
+The well used as reference well for setting threshold.
 
 # PoDCall functions
 

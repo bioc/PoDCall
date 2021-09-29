@@ -217,6 +217,22 @@ formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400\)
 Normalized concentration with single gene as control, calculated by the
 formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100\)
 
+### q
+
+The value used for Q
+
+### target\_assay
+
+The assay used for target channel, provided via sample sheet.
+
+### ctrl\_assay
+
+The assay used for control channel, provided via sample sheet.
+
+### ref\_well
+
+The well used as reference well for setting threshold.
+
 # PoDCall functions
 
 `podcallDdpcr()` is the main wrapper function that returns a table with
@@ -459,17 +475,17 @@ PoDCall is loaded, and is available as an object called `thrTable`. See
 ## The threshold table
 thrTable
 #>       sample_id thr_target thr_ctrl pos_dr_target pos_dr_ctrl tot_droplets
-#> A04      SW1463       2761     8750          2479       13190        18739
-#> B04       SW403       2739     8254           660        7789        16933
-#> D04       SW480       2863     8111            44        8509        11713
-#> D05 IVDZ_bisulf       2818     8095          1675        6823        12642
-#> H05         NTC       2823     7532             0          91        19638
-#>     c_target   c_ctrl c_norm_4Plex c_norm_sg q target_assay ctrl_assay
-#> A04  166.700 1430.000       46.630   11.6600 9          VIM   new4Plex
-#> B04   46.720  724.000       25.810    6.4530 9          VIM   new4Plex
-#> D04    4.423 1523.000        1.162    0.2904 9          VIM   new4Plex
-#> D05  167.000  911.700       73.270   18.3200 9          VIM   new4Plex
-#> H05    0.000    5.458        0.000    0.0000 9          VIM   new4Plex
+#> A04      SW1463       2761     9127          2479       12906        18739
+#> B04       SW403       2739     8632           660        7471        16933
+#> D04       SW480       2863     8489            44        8348        11713
+#> D05 IVDZ_bisulf       2818     8473          1675        6584        12642
+#> H05         NTC       2823     7910             0           0        19638
+#>     c_target c_ctrl c_norm_4Plex c_norm_sg q target_assay ctrl_assay ref_well
+#> A04  166.700 1371.0        48.64     12.16 9          VIM   new4Plex      A04
+#> B04   46.720  683.9        27.33     6.831 9          VIM   new4Plex      A04
+#> D04    4.423 1466.0        1.207    0.3017 9          VIM   new4Plex      A04
+#> D05  167.000  864.4        77.28     19.32 9          VIM   new4Plex      A04
+#> H05    0.000    0.0       No DNA    No DNA 9          VIM   new4Plex      A04
 ```
 
 # Session info
@@ -496,7 +512,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_1.1.3
+#> [1] PoDCall_1.1.4
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Rcpp_1.0.5           highr_0.9            later_1.1.0.1       
