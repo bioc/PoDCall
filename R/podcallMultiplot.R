@@ -24,7 +24,7 @@
 #' ## Read in data files
 #' data <- importAmplitudeData(path)
 #' data("thrTable")
-#' 
+#'
 #' ## Create plot using threshold from thrTable, see ?thrTable
 #' plot <- podcallMultiplot(plateData=data,
 #'                         thresholds=thrTable[names(data), ],
@@ -37,6 +37,9 @@ podcallMultiplot <- function(plateData, thresholds, channel){
     ## Check for data in channel 2
     if(channel == 2 && is.na(plateData[[1]][channel])){
         warning("No data for channel 2"); return(NULL)}
+
+    if(channel == 2 && any(is.na(thresholds))){
+        warning("Missing thresholds for for channel 2"); return(NULL)}
 
     ## Get channel data, add columns with well ID and breaks to color droplets
     plateCh <-

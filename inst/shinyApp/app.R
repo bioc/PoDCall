@@ -28,7 +28,7 @@ library(DT)
                                       ".csv"),
                               multiple=FALSE),
                   tags$hr(),
-                  numericInput("RefWell", "Reference well", 1, min=1, max=96),
+                  uiOutput("refWellOutput"),
                   numericInput("BInput", "Number of permutations", 200),
                   numericInput("QInput", "Q (For determining outliers)", 9),
                   actionButton("goButton", "Set thresholds")
@@ -202,6 +202,17 @@ server <- function(input, output, session) {
 
     })
 
+    ## Create refWell selection output
+    output$refWellOutput <- renderUI({
+
+      selectInput("refWellInput", "Reference well",
+                  choices=names(plateList()),
+                  selected=TRUE,
+                  multiple=FALSE,
+                  #width="100%",
+                  selectize=TRUE)
+    })
+
     ## Calculate the results/thresholds
     thr <- eventReactive(input$goButton, {
 
@@ -232,6 +243,7 @@ server <- function(input, output, session) {
         editedCh1 <- character(length(plateList))
         editedCh2 <- character(length(plateList))
         q <- rep(input$QInput, length(plateList))
+        referenceWell <- which(names(plateList) == input$refWellInput)
 
         # Calculate threshold table
         data.frame(sample_id,
@@ -239,11 +251,11 @@ server <- function(input, output, session) {
                                     nchannels=dim(plateList[[1]])[2],
                                     B=input$BInput,
                                     Q=input$QInput,
-                                    refWell=input$RefWell,
+                                    refWell=referenceWell,
                                     updateProgress=updateProgress),
                     q,
                     target_assay, ctrl_assay,
-                    ref_well=names(plateList)[input$RefWell],
+                    ref_well=names(plateList)[referenceWell],
                     editedCh1, editedCh2,
                     stringsAsFactors=FALSE)
     })
@@ -544,6 +556,10 @@ server <- function(input, output, session) {
                                 thresholds$df[input$wellInput, "sample_id"],
                                 ", ",
                                 thresholds$df[input$wellInput, "ctrl_assay"])
+
+            if(is.na(thr))
+              showNotification("Missing threshold for channel 2",
+                               duration=NULL, type="warning")
         }
 
         # Get data for user selected well
@@ -572,6 +588,14 @@ server <- function(input, output, session) {
         }else{
             channel <- 2
         }
+
+        if(any(is.na(thresholds$df[input$wellInput,"thr_target"])))
+          showNotification("Missing thresholds for channel 1",
+                           duration=NULL, type="warning")
+
+        if(any(is.na(thresholds$df[input$wellInput,"thr_ctrl"])))
+          showNotification("Missing thresholds for channel 2",
+                           duration=NULL, type="warning")
 
         ## Make the comparison plot
         multiplot <- podcallMultiplot(plateData=plateList()[input$wellInput],
