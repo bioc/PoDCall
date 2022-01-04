@@ -21,7 +21,7 @@ Description: Reads files exported from 'QuantaSoft' containing amplitude values
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-Depends: R (>= 4.1)
+Depends: R (>= 4.2)
 Imports: 
     ggplot2,
     gridExtra,
