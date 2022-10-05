@@ -164,15 +164,17 @@ server <- function(input, output, session) {
             wellData <- utils::read.csv(x, header=TRUE, sep=",",
                             col.names=c("Ch1", "Ch2", "cluster"))[seq_len(2)]
             if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]))
-                #| TRUE %in% (wellData[, 1] < 0))
                 showNotification(paste0("Check channel 1 values in file: ", i),
                                  duration=NULL, type="warning")
-            if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2]))
-                #| TRUE %in% (wellData[, 2] < 0))
-                showNotification(paste0("Check channel 2 values in file: ", i),
-                                duration=NULL, type="warning")
             return(list(wellData))
         }, x=inFile$datapath, i=inFile$name)
+
+        Ch2Missing <- lapply(plateData, function(x){TRUE %in% is.na(x[,2])})
+        if(TRUE %in% Ch2Missing)
+            showNotification(paste0("There is missing data for channel 2 in one
+                                    or more input files. Check input files or
+                                    disregard if channel is not used."),
+                                    duration=NULL, type="warning")
 
         ## Set well ID as names for data frames holding amplitude data
         names(plateData) <- well_id
@@ -549,17 +551,13 @@ server <- function(input, output, session) {
                                 thresholds$df[input$wellInput, "sample_id"],
                                 ", ",
                                 thresholds$df[input$wellInput, "target_assay"])
-        }else{
+        }else if(chSel == "Channel 2 - control"){
             channel <- 2
             thr <- thresholds$df[input$wellInput, "thr_ctrl"]
             plotTitle <- paste(input$wellInput, ", ",
                                 thresholds$df[input$wellInput, "sample_id"],
                                 ", ",
                                 thresholds$df[input$wellInput, "ctrl_assay"])
-
-            if(is.na(thr))
-              showNotification("Missing threshold for channel 2",
-                               duration=NULL, type="warning")
         }
 
         # Get data for user selected well
@@ -585,17 +583,15 @@ server <- function(input, output, session) {
         chSel <- input$channelInput
         if(chSel == "Channel 1 - target"){
             channel <- 1
-        }else{
+            if(any(is.na(thresholds$df[input$wellInput,"thr_target"])))
+                showNotification("Missing thresholds for channel 1",
+                                duration=NULL, type="warning")
+        }else if(chSel == "Channel 2 - control"){
             channel <- 2
+            if(any(is.na(thresholds$df[input$wellInput,"thr_ctrl"])))
+                showNotification("Missing thresholds for channel 2",
+                                duration=NULL, type="warning")
         }
-
-        if(any(is.na(thresholds$df[input$wellInput,"thr_target"])))
-          showNotification("Missing thresholds for channel 1",
-                           duration=NULL, type="warning")
-
-        if(any(is.na(thresholds$df[input$wellInput,"thr_ctrl"])))
-          showNotification("Missing thresholds for channel 2",
-                           duration=NULL, type="warning")
 
         ## Make the comparison plot
         multiplot <- podcallMultiplot(plateData=plateList()[input$wellInput],
