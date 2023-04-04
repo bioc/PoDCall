@@ -2,6 +2,11 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.7.1 (2023-04-04)}{
+\itemize{
+    \item Suggest user to change reference well when no threshold for ch 2
+}}
+
 \section{Changes in version 1.1.1 (2021-06-09)}{
 \itemize{
     \item Implemented use of Reference well for control channel

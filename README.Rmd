@@ -181,8 +181,7 @@ Number of droplets.
 ### c_target 
 Concentration of target, calculated by the formula 
 $-\ln\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
-(where does 0.000851 come from from and what is the name of this parameter) 
-where neg_drop_tar is number of negative droplets in channel 1 (target).
+Where neg_drop_tar is number of negative droplets in channel 1 (target).
 
 ### c_ctrl 
 Concentration of control, calculated by the formula 

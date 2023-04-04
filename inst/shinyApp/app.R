@@ -166,6 +166,9 @@ server <- function(input, output, session) {
             if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]))
                 showNotification(paste0("Check channel 1 values in file: ", i),
                                  duration=NULL, type="warning")
+            #if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2]))
+                #showNotification(paste0("Check channel 2 values in file: ", i),
+                                #duration=NULL, type="warning")
             return(list(wellData))
         }, x=inFile$datapath, i=inFile$name)
 
@@ -589,7 +592,8 @@ server <- function(input, output, session) {
         }else if(chSel == "Channel 2 - control"){
             channel <- 2
             if(any(is.na(thresholds$df[input$wellInput,"thr_ctrl"])))
-                showNotification("Missing thresholds for channel 2",
+                showNotification("Missing thresholds for channel 2.Try a
+                                 different reference well.",
                                 duration=NULL, type="warning")
         }
 
