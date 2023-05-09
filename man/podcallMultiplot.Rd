@@ -28,7 +28,7 @@ A function that returns faceted scatterplots for multiple wells
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 ## Read in data files
-data <- importAmplitudeData(path)
+data <- importAmplitudeData(path, skipLines=0)
 data("thrTable")
 
 ## Create plot using threshold from thrTable, see ?thrTable

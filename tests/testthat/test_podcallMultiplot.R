@@ -4,7 +4,7 @@ test_that("Whether comparison plot is created correctly",{
 
     ## Path to data files
     dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
-    amplitudeData <- importAmplitudeData(dataPath)
+    amplitudeData <- importAmplitudeData(dataPath, skipLines=0)
 
     ## Select wells and channel to plot
     wells <- names(amplitudeData)[1:3] # First three wells from set

@@ -4,7 +4,7 @@
 \alias{importAmplitudeData}
 \title{importAmplitudeData}
 \usage{
-importAmplitudeData(dataDirectory)
+importAmplitudeData(dataDirectory, skipLines = c(0, 4))
 }
 \arguments{
 \item{dataDirectory}{Path to directory containing Quantasoft amplitude files
@@ -12,6 +12,10 @@ from one 96 well plate. Since well coordinates are used as identifiers,
 files in this directory should all be from the same 96 well plate.
 Furthermore, there should be no other files than the amplitude files from
 a well plate in the directory.}
+
+\item{skipLines}{Number of lines to skip in amplitude data files. Must be 0
+or 4 depending on software used to export data. 0 for QuantaSoft, 4 for
+QXmanager.}
 }
 \value{
 The function returns a list of dataframes named with the well ID
@@ -25,6 +29,6 @@ importAmplitudeData
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 # Read in data files
-dataList <- importAmplitudeData(dataDirectory=path)
+dataList <- importAmplitudeData(dataDirectory=path, skipLines=0)
 
 }

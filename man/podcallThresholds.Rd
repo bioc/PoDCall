@@ -38,7 +38,7 @@ Function sets threshold per channel per well and calculates
 dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 ## Read in example data
-dataList <- importAmplitudeData(dataDirectory=dataPath)
+dataList <- importAmplitudeData(dataDirectory=dataPath, skiplines=0)
 
 ## Set thresholds
 thresholds <- podcallThresholds(plateData=dataList,

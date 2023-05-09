@@ -4,7 +4,7 @@ test_that("Whether channel plot is created correctly",{
 
     ## Path to data files
     dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
-    amplitudeData <- importAmplitudeData(dataPath)
+    amplitudeData <- importAmplitudeData(dataPath, skipLines=0)
 
     ## Read in threshold table calculated from the data
     data("thrTable")

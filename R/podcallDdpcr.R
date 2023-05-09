@@ -23,6 +23,9 @@
 #' @param Q A parameter for calling outliers (default=9)
 #' @param refwell reference well to calculate the shift in baseline (default=1)
 #' @param ch2 Logical argument to denote channel 2 amplitudes (default=TRUE)
+#' @param software The software data was exported from, either QuntaSoft or
+#'     QXmanager. Needs to be specified to ensure correct reading of data and
+#'     sample sheet due to difference in formatting. (defult="QX Manager")
 #' @param resultsToFile Should results be written to file(.csv)? (default=FALSE)
 #' @param plots Should plots be created and written to file? (default=FALSE)
 #' @param resPath Optional argument to provide results directory path
@@ -45,6 +48,7 @@
 #'                     Q=9,
 #'                     refwell=1,
 #'                     ch2=TRUE,
+#'                     software=c("QuantaSoft", "QX Manager")[2],
 #'                     resultsToFile=FALSE,
 #'                     plots=FALSE,
 #'                     resPath=NULL)
@@ -58,14 +62,15 @@
 #' ## Run PodCall
 #' podcallResults <- podcallDdpcr(dataDirectory=dataPath,
 #'                                 sampleSheetFile=ssPath,
-#'                                 B=100)
+#'                                 B=100, software="QuantaSoft")
 #'
 podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
-                        refwell=1, ch2=TRUE, resultsToFile=FALSE, plots=FALSE,
-                        resPath=NULL){
+                        refwell=1, ch2=TRUE,
+                        software=c("QuantaSoft", "QX Manager")[2],
+                        resultsToFile=FALSE, plots=FALSE, resPath=NULL){
 
     ## Check arguments
-    checkArgumentsDdpcr(dataDirectory, sampleSheetFile, ch2,
+    checkArgumentsDdpcr(dataDirectory, sampleSheetFile, ch2, software,
                         resultsToFile, plots)
 
     ## If only one channel is used in the experiment
@@ -84,11 +89,15 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
 
     ############################### READ IN DATA ###############################
     ## Read in amplitude data from file(s) and store as list.
-    plateData <- importAmplitudeData(dataDirectory)
+    if(software == "QuantaSoft") skiplines <- 0
+    if(software == "QX Manager") skiplines <- 4
+
+    plateData <- importAmplitudeData(dataDirectory, skipLines=skiplines)
 
     ## Add sample sheet information
     sampleSheet <- importSampleSheet(sampleSheet=sampleSheetFile,
-                                    well_id=names(plateData))
+                                    well_id=names(plateData),
+                                    software=software)
 
     ############################## SET THRESHOLDS ##############################
     thrRes <- data.frame(sample_id=sampleSheet[,"sample_id"],
@@ -140,7 +149,7 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
 ## Internal functions
 
 ## Function that checks the arguments to podcallDdpcr()
-checkArgumentsDdpcr <- function(dataDirectory, sampleSheetFile, ch2,
+checkArgumentsDdpcr <- function(dataDirectory, sampleSheetFile, ch2, software,
                             resultsToFile, plots){
 
     ## Check arguments
@@ -148,6 +157,8 @@ checkArgumentsDdpcr <- function(dataDirectory, sampleSheetFile, ch2,
     if(!is.character(sampleSheetFile) & !is.null(sampleSheetFile))
         stop("sampleSheetFile must be character")
     if(!is.logical(ch2)) stop("ch2 must be logical")
+    if(!(software %in% c("QuantaSoft", "QX Manager")))
+        stop("software must be 'QuantaSoft' or 'QX Manger'")
     if(!is.logical(resultsToFile)) stop("resultsToFile must be logical")
     if(!is.logical(plots)) stop("plots must be logical")
 

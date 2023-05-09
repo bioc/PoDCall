@@ -15,6 +15,7 @@ library(DT)
           tabPanel("Import files",
               sidebarLayout(
                   sidebarPanel(
+                  uiOutput("softwareOutput"),
                   fileInput("amplitudeFile",
                               "Select amplitude (.csv) file(s)",
                               accept=c("text/csv",
@@ -145,6 +146,16 @@ library(DT)
 
 server <- function(input, output, session) {
 
+  ## Create software version selection output
+  output$softwareOutput <- renderUI({
+
+    selectInput("softwareInput", "Data exported from",
+                choices=c("QuantaSoft", "QX Manager"),
+                selected="QX Manager",
+                multiple=FALSE,
+                selectize=TRUE)
+    })
+
     ## Read in data from selected files and store in a list
     plateList <- reactive ({
 
@@ -158,17 +169,20 @@ server <- function(input, output, session) {
         well_id <- unlist(
             lapply(strsplit(inFile$name, split="_"),
                     function(x) x[length(x) -1]))
+        ## Determine number of lines to skip in amplitude files
+        if(input$softwareInput == "QuantaSoft")
+            skipLines <- 0
+        if(input$softwareInput == "QX Manager")
+            skipLines <- 4
 
         ## Read files and store in list
         plateData <- mapply(function(x, i){
-            wellData <- utils::read.csv(x, header=TRUE, sep=",",
-                            col.names=c("Ch1", "Ch2", "cluster"))[seq_len(2)]
+            wellData <- utils::read.csv(x, header=TRUE, sep=",", skip=skipLines,
+                                        )[seq_len(2)]
+            colnames(wellData) <- c("Ch1", "Ch2")
             if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]))
                 showNotification(paste0("Check channel 1 values in file: ", i),
                                  duration=NULL, type="warning")
-            #if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2]))
-                #showNotification(paste0("Check channel 2 values in file: ", i),
-                                #duration=NULL, type="warning")
             return(list(wellData))
         }, x=inFile$datapath, i=inFile$name)
 
@@ -203,7 +217,8 @@ server <- function(input, output, session) {
 
         ## Import sample sheet data
         ssData <- importSampleSheet(sampleSheet=inFile$datapath[1],
-                                    well_id=names(plateList()))
+                                    well_id=names(plateList()),
+                                    software=input$softwareInput)
 
     })
 

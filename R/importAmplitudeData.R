@@ -10,6 +10,9 @@
 #'     files in this directory should all be from the same 96 well plate.
 #'     Furthermore, there should be no other files than the amplitude files from
 #'     a well plate in the directory.
+#' @param skipLines Number of lines to skip in amplitude data files. Must be 0
+#'     or 4 depending on software used to export data. 0 for QuantaSoft, 4 for
+#'     QXmanager.
 #'
 #' @return The function returns a list of dataframes named with the well ID
 #'     and contains the amplitude values from the corresponding well.
@@ -23,11 +26,12 @@
 #' path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 #'
 #' # Read in data files
-#' dataList <- importAmplitudeData(dataDirectory=path)
+#' dataList <- importAmplitudeData(dataDirectory=path, skipLines=0)
 #'
-importAmplitudeData <- function(dataDirectory){
+importAmplitudeData <- function(dataDirectory, skipLines=c(0,4)){
 
     if(!is.character(dataDirectory)) stop("dataDirectory must be character")
+    if(!(skipLines %in% c(0,4))) stop("skipLines must be 0 or 4")
 
     ###LIST THE RAW AMPLITUDE FILES
     amplitudeFiles <- list.files(path=dataDirectory, pattern="_Amplitude.csv")
@@ -47,14 +51,16 @@ importAmplitudeData <- function(dataDirectory){
 
     ## Read files and store in list
     plateData <- lapply(filenames, function(x){
-        wellData <- utils::read.csv(x, header=TRUE, sep=",",
-                            col.names=c("Ch1", "Ch2", "cluster"))[seq_len(2)]
+        wellData <- utils::read.csv(x, header=TRUE, sep=",", skip=skipLines,
+                            #col.names=c("Ch1", "Ch2", "cluster")
+                            )[seq_len(2)]
+        colnames(wellData) <- c("Ch1", "Ch2")
         if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]) |
             TRUE %in% (wellData[, 1] < 0))
-            warning("Check values of channel 1 in file: ", x)
+            warning(paste0("Check values of channel 1 in file: ", x))
         if(TRUE %in% is.nan(wellData[, 2]) | TRUE %in% is.na(wellData[, 2]) |
             TRUE %in% (wellData[, 2] < 0))
-            warning("Check values of channel 2 in file: ", x)
+            warning(paste0("Check values of channel 2 in file: ", x))
         return(wellData)
     })
     ## Name list elements with well ID

@@ -4,7 +4,7 @@ test_that("Whether threshold table is returned correctly",{
 
     ## Path to data files
     dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
-    amplitudeData <- importAmplitudeData(dataPath)
+    amplitudeData <- importAmplitudeData(dataPath, skipLines=0)
 
     ## Read sample sheet
     thresholdTable <- podcallThresholds(plateData=amplitudeData, B=100)

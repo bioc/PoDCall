@@ -10,6 +10,7 @@ podcallDdpcr(dataDirectory,
                     Q=9,
                     refwell=1,
                     ch2=TRUE,
+                    software=c("QuantaSoft", "QX Manager")[2],
                     resultsToFile=FALSE,
                     plots=FALSE,
                     resPath=NULL)
@@ -33,6 +34,10 @@ following columns: Well, Sample, TargetType and Target.}
 \item{refwell}{reference well to calculate the shift in baseline (default=1)}
 
 \item{ch2}{Logical argument to denote channel 2 amplitudes (default=TRUE)}
+
+\item{software}{The software data was exported from, either QuntaSoft or
+QXmanager. Needs to be specified to ensure correct reading of data and
+sample sheet due to difference in formatting. (defult="QX Manager")}
 
 \item{resultsToFile}{Should results be written to file(.csv)? (default=FALSE)}
 
@@ -67,6 +72,6 @@ ssPath <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 ## Run PodCall
 podcallResults <- podcallDdpcr(dataDirectory=dataPath,
                                 sampleSheetFile=ssPath,
-                                B=100)
+                                B=100, software="QuantaSoft")
 
 }

@@ -1,7 +1,7 @@
 Package: PoDCall
 Type: Package
 Title: Positive Droplet Calling for DNA Methylation Droplet Digital PCR 
-Version: 1.7.1
+Version: 1.9.1
 Authors@R: c(person("Hans Petter", "Brodal", 
                     role=c("aut", "cre"), 
                     email="hans.petter.brodal@rr-research.no"),
@@ -9,15 +9,16 @@ Authors@R: c(person("Hans Petter", "Brodal",
                     email="marine.jeanmougin@rr-research.no"),
             person("Guro Elisabeth", "Lind", role="aut", 
                     email="guro.elisabeth.lind@rr-research.no"))
-Description: Reads files exported from 'QuantaSoft' containing amplitude values 
-    from a run of ddPCR (96 well plate) and robustly sets thresholds to 
-    determine positive droplets for each channel of each individual well. 
+Description: Reads files exported from 'QX Manager or QuantaSoft' containing 
+    amplitude values from a run of ddPCR (96 well plate) and robustly sets 
+    thresholds to determine positive droplets for each channel of each 
+    individual well. 
     Concentration and normalized concentration in addition to other metrics is 
     then calculated for each well. Results are returned as a table, optionally 
-    written to file, as well as optional plots (scatterplot and 
-    histogram) for both channels per well written to file. The package includes
-    a shiny application which provides an interactive and user-friendly 
-    interface to the full functionality of PoDCall.
+    written to file, as well as optional plots (scatterplot and histogram) for 
+    both channels per well written to file. The package includes a shiny 
+    application which provides an interactive and user-friendly interface to the
+    full functionality of PoDCall.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.2

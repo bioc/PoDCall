@@ -4,14 +4,22 @@
 \alias{importSampleSheet}
 \title{importSampleSheet}
 \usage{
-importSampleSheet(sampleSheet = NULL, well_id = NULL)
+importSampleSheet(
+  sampleSheet = NULL,
+  well_id = NULL,
+  software = c("QuantaSoft", "QX Manager")[2]
+)
 }
 \arguments{
-\item{sampleSheet}{Path to sample sheet file containg information about
+\item{sampleSheet}{Path to sample sheet file containing information about
 samples.}
 
 \item{well_id}{Character vector with well IDs corresponding to uploaded
 amplitude files.}
+
+\item{software}{Name (character) of software data and sample sheet was
+exported from. Must be either 'QuantaSoft' or 'QX Manager'. Be careful
+to use correct spelling.}
 }
 \value{
 A matrix with columns for sample ID, target assay and control assay.
@@ -31,6 +39,7 @@ path <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 well_id <- c("A04", "B04", "D04")
 
 ## Get information for selected wells
-sampleSheet <- importSampleSheet(sampleSheet=path, well_id=well_id)
+sampleSheet <- importSampleSheet(sampleSheet=path, well_id=well_id,
+                                 software="QuantaSoft")
 
 }

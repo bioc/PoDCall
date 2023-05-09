@@ -8,6 +8,7 @@ sampleSheet <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 
 # Set thresholds and calculate results
 thrTable <- podcallDdpcr(dataDirectory=dataPath,
-                          sampleSheetFile=sampleSheet)
+                          sampleSheetFile=sampleSheet,
+                          software="QuantaSoft")
 
-usethis::use_data(thrTable, compress="xz", overwrite=TRUE)
+usethis::use_data(thrTable, compress="xz", overwrite = TRUE)

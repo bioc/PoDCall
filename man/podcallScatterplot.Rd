@@ -29,7 +29,7 @@ Function that make a scatterplot of amplitude values from one
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 # Read in data
-data <- importAmplitudeData(path)
+data <- importAmplitudeData(path, skipLines=0)
 data("thrTable")
 
 # Get name of first list element and use as well ID

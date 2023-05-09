@@ -12,16 +12,15 @@
 PoDCall (Positive Droplet Caller) is a package that aims to provide a
 robust calling of positive droplets in DNA methylation droplet digital
 PCR (ddPCR) experiments performed on the Bio-Rad platform. PoDCall
-provides functions that reads files exported from QuantaSoft containing
-amplitudes from a run of ddPCR (one 96 well plate), sets thresholds for
-both channels of each individual well and calculates concentrations and
-normalized concentration for each well. The resulting threshold table
-can optionally be written to file automatically by the main workflow
-function. PoDCall also offers functionality for plotting, both
-individual wells and multiple well plots. Plots for individual wells can
-be made and saved as .pdf-files as part of the main workflow function
-`podcallDdpcr()`, or by calling the various plotting functions
-individually.
+provides functions that reads files exported from QuantaSoft or QX
+Manager containing amplitudes from a run of ddPCR (one 96 well plate),
+sets thresholds for both channels of each individual well and calculates
+concentrations and normalized concentration for each well.The resulting
+threshold table can optionally be written to file automatically by the
+main workflow function. PoDCall also offers functionality for plotting,
+both individual wells and multiple well plots. Plots for individual
+wells can be made and saved as .pdf-files as part of the main workflow
+function, or by calling the various plotting functions individually.
 
 ## Gaussian Mixture Models
 
@@ -35,10 +34,10 @@ the application note.
 
 ## Input Data
 
-The input data is .csv-files exported from ‘QuantaSoft’, and each file
-contains the amplitude values of droplets from one well of a 96 well
-plate. The first two columns of the files should have headers ‘Ch1
-Amplitude’ and ‘Ch2 Amplitude’. To read in data, use the function
+The input data is .csv-files exported from ‘QuantaSoft’ or ‘QX Manager,
+and each file contains the amplitude values of droplets from one well of
+a 96 well plate. The first two columns of the files should have headers
+’Ch1 Amplitude’ and ‘Ch2 Amplitude’. To read in data, use the function
 importAmplitudeData, which will read all amplitude files in the
 directory given as argument. Each file will be stored as a named data
 frame in a list, where the name will be the well ID. For this reason,
@@ -52,8 +51,9 @@ packages are not yet installed, the installation of PoDCall should take
 care of it (you will be prompted to install the packages that are
 missing).
 
-The released version of PoDCall can be installed from
-[BIOCONDUCTOR](http://bioconductor.org/) using
+The released version of PoDCall can not yet be installed from
+[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be
+installed from GitHub or from a source file.
 
 ``` r
 ## Install PoDCall from Bioconductor
@@ -68,7 +68,7 @@ devtools::install_github("HansPetterBrodal/PoDCall")
 
 ## Install PoDCall from source file
 install.packages("remotes")
-remotes::install_local("path/to/PoDCall_x.y.z.tar.gz")
+remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
 ```
 
 After installing PoDCall and the required packages, PoDCall can be
@@ -88,12 +88,18 @@ workflow, call the function `podcallDdpcr()`:
 
 ``` r
 ## Run PoDCall
-thresholdTable <- podcallDdpcr(dataDirectory="path/to/data/")
+thresholdTable <- podcallDdpcr(dataDirectory="path/to/data/", 
+                                software="QuantaSoft")
 ```
 
 Where “path/to/data/” is the path of the directory that contains
 amplitude files from a well plate, in which the files have names that
-end with "\_wellID\_amplitude.csv".
+end with "\_wellID\_amplitude.csv“.”software" is the software that was
+used to export the data (amplitude) files and the sample sheet. Must be
+either “QuantaSoft” or “QX Manager”. Since the different software
+versions format amplitude files and sample sheet differently, it is
+important to set the correct value as argument to ensure that data and
+sample sheet is read correctly.
 
 ## Optional arguments
 
@@ -106,8 +112,8 @@ disabled by default.
 Path to sample sheet file. Must be a .csv file exported from QuantaSoft
 and must include the following columns: Well, Sample, TargetType and
 Target. The entries in the column TargetType must be either ‘Ch1Unknown’
-or ‘Ch2Unknown’, and is used to extract rows with information from
-either channel 1 or channel 2. An example file has been included in the
+or Ch2Unknown, and is used to extract rows with information from either
+channel 1 or channel 2. An example file has been included in the
 package, which can be found using `system.file("extdata",
 "Sample_names.csv", package="PoDCall")`
 
@@ -163,7 +169,7 @@ other than the results directory created by default. Requires
 
 ## Threshold table columns
 
-The table that is returned when running `podcallDdpcr()` contains
+The table that is returned when running `podcall_ddpcr()` contains
 columns with more or less self-explanatory column names, and well ID
 (well coordinates) as rownames:
 
@@ -195,15 +201,14 @@ Number of droplets.
 ### c\_target
 
 Concentration of target, calculated by the formula
-\(-\ln\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}\)
-(where does 0.000851 come from from and what is the name of this
-parameter) where neg\_drop\_tar is number of negative droplets in
-channel 1 (target).
+\(-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}\)
+where neg\_drop\_tar is number of negative droplets in channel 1
+(target).
 
 ### c\_ctrl
 
 Concentration of control, calculated by the formula
-\(-\ln\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}\)
+\(-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}\)
 where neg\_drop\_ctrl is number of negative droplets in channel 2
 (control).
 
@@ -244,17 +249,17 @@ help files for more details about the functions and their arguments.
 
 ## `importAmplitudeData()`
 
-Reads .csv-files with amplitude data outputted from QuantaSoft and store
-the data in a list, one data frame per well. Each element in the list
-will be named using it’s well ID (coordinate) of the 96 well plate that
-the sample belong to.
+Reads .csv-files with amplitude data outputted from QuantaSoft or QX
+Manager and store the data in a list, one data frame per well. Each
+element in the list will be named using it’s well ID (coordinate) of the
+96 well plate that the sample belong to.
 
 ``` r
 ## Path to example data files included in PoDCall
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 ## Read in data files
-dataList <- importAmplitudeData(dataDirectory=path)
+dataList <- importAmplitudeData(dataDirectory=path, skipLines=0)
 str(dataList)
 #> List of 5
 #>  $ A04:'data.frame': 18739 obs. of  2 variables:
@@ -276,8 +281,9 @@ str(dataList)
 
 ## `importSampleSheet()`
 
-Reads a .csv-file outputted from QuantaSoft to get information about the
-samples: Sample name/id, Assay for target and control.
+Reads a .csv-file outputted from QuantaSoft or QX Manager to get
+information about the samples: Sample name/id, Assay for target and
+control.
 
 ``` r
 ## Path to example files included in PoDCall
@@ -287,7 +293,8 @@ path <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 well_id <- c("A04", "B04", "D04")
 
 ## Read in sample sheet information for selected wells
-sampleSheet <- importSampleSheet(sampleSheet=path, well_id=well_id)
+sampleSheet <- importSampleSheet(sampleSheet=path, well_id=well_id, 
+                                software="QuantaSoft")
 print(sampleSheet)
 #>   well_id sample_id target_assay ctrl_assay
 #> 1     A04    SW1463          VIM   new4Plex
@@ -311,7 +318,7 @@ all lower thresholds.
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
 
 ## Read in data files
-ampData <- importAmplitudeData(dataDirectory=path)
+ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 
 ## Calculate thresholds, metrics, concentrations
 thresholdTable <- podcallThresholds(plateData=ampData)
@@ -327,7 +334,7 @@ and draws a plot with both.
 ``` r
 ## Read in data and threshold table
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
-ampData <- importAmplitudeData(dataDirectory=path)
+ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 data("thrTable")
 thresholdTable <- thrTable
 
@@ -355,7 +362,7 @@ well as argument and returns a scatter plot.
 ``` r
 ## Read in data and threshold table
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
-ampData <- importAmplitudeData(dataDirectory=path)
+ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 thresholdTable <- thrTable
 
 ## Select channel and well to plot
@@ -382,7 +389,7 @@ well as argument, and returns a histogram.
 ``` r
 ## Read in data and threshold table
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
-ampData <- importAmplitudeData(dataDirectory=path)
+ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 thresholdTable <- thrTable
 
 ## Select channel and well to plot
@@ -410,7 +417,7 @@ suitable for comparing wells.
 ``` r
 ## Read in data and threshold table
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
-ampData <- importAmplitudeData(dataDirectory=path)
+ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 thresholdTable <- thrTable
 
 ## Channel to plot
@@ -512,26 +519,29 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_1.1.4
+#> [1] PoDCall_1.9.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Rcpp_1.0.5           highr_0.9            later_1.1.0.1       
-#>  [4] compiler_4.1.0       pillar_1.6.1         shinyjs_2.0.0       
-#>  [7] tools_4.1.0          digest_0.6.27        mclust_5.4.7        
-#> [10] evaluate_0.14        lifecycle_1.0.0      tibble_3.0.4        
-#> [13] gtable_0.3.0         pkgconfig_2.0.3      rlang_0.4.11        
-#> [16] rstudioapi_0.13      cli_2.5.0            shiny_1.6.0         
-#> [19] yaml_2.2.1           parallel_4.1.0       LaplacesDemon_16.1.4
-#> [22] xfun_0.23            fastmap_1.0.1        gridExtra_2.3       
-#> [25] stringr_1.4.0        knitr_1.33           htmlwidgets_1.5.3   
-#> [28] vctrs_0.3.8          hms_1.1.0            diptest_0.75-7      
-#> [31] grid_4.1.0           DT_0.18              data.table_1.13.4   
-#> [34] glue_1.4.2           R6_2.5.0             fansi_0.5.0         
-#> [37] rmarkdown_2.8        farver_2.1.0         ggplot2_3.3.3       
-#> [40] purrr_0.3.4          readr_1.4.0          magrittr_2.0.1      
-#> [43] promises_1.1.1       scales_1.1.1         htmltools_0.5.1.1   
-#> [46] ellipsis_0.3.2       rlist_0.4.6.1        xtable_1.8-4        
-#> [49] mime_0.9             colorspace_2.0-0     httpuv_1.5.4        
-#> [52] labeling_0.4.2       utf8_1.2.1           stringi_1.6.1       
-#> [55] munsell_0.5.0        crayon_1.4.1
+#>  [1] tidyselect_1.1.2     xfun_0.29            shinyjs_2.1.0       
+#>  [4] purrr_0.3.4          colorspace_2.0-2     vctrs_0.3.8         
+#>  [7] generics_0.1.2       htmltools_0.5.2      yaml_2.2.2          
+#> [10] utf8_1.2.2           rlang_1.0.1          pillar_1.7.0        
+#> [13] later_1.3.0          glue_1.6.1           DBI_1.1.2           
+#> [16] bit64_4.0.5          lifecycle_1.0.1      stringr_1.4.0       
+#> [19] munsell_0.5.0        gtable_0.3.0         htmlwidgets_1.5.4   
+#> [22] LaplacesDemon_16.1.6 evaluate_0.15        labeling_0.4.2      
+#> [25] knitr_1.37           tzdb_0.2.0           fastmap_1.1.0       
+#> [28] httpuv_1.6.5         parallel_4.1.0       fansi_1.0.2         
+#> [31] highr_0.9            Rcpp_1.0.8           xtable_1.8-4        
+#> [34] readr_2.1.2          scales_1.1.1         promises_1.2.0.1    
+#> [37] DT_0.20              diptest_0.76-0       vroom_1.5.7         
+#> [40] farver_2.1.0         bit_4.0.4            mime_0.12           
+#> [43] gridExtra_2.3        ggplot2_3.3.5        hms_1.1.1           
+#> [46] digest_0.6.29        stringi_1.7.6        rlist_0.4.6.2       
+#> [49] dplyr_1.0.8          shiny_1.7.1          grid_4.1.0          
+#> [52] cli_3.1.1            tools_4.1.0          magrittr_2.0.2      
+#> [55] tibble_3.1.6         crayon_1.5.0         pkgconfig_2.0.3     
+#> [58] ellipsis_0.3.2       data.table_1.14.2    assertthat_0.2.1    
+#> [61] rmarkdown_2.11       rstudioapi_0.13      R6_2.5.1            
+#> [64] mclust_5.4.9         compiler_4.1.0
 ```

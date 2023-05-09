@@ -2,12 +2,22 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.9.1 (2023-05-03)}{
+\itemize{
+    \item Made PoDCall compatible with new BioRad software QX Manager
+}}
+
 \section{Changes in version 1.7.1 (2023-04-04)}{
 \itemize{
     \item Suggest user to change reference well when no threshold for ch 2
 }}
 
-\section{Changes in version 1.1.1 (2021-06-09)}{
+\section{Changes in version 1.6.1 (2023-04-03)}{
+\itemize{
+    \item Better handling of missing threshold, provide suggestion to user
+}}
+
+\section{Changes in version 0.99.7 (2021-04-06)}{
 \itemize{
     \item Implemented use of Reference well for control channel
 }}
@@ -27,7 +37,7 @@
     \item Changed R version dependency to >= 4.1 (R-devel)
 }}
 
-\section{Changes in version 0.99.3 (2020-12-08)}{
+\section{Changes in version 0.99.3 (2020-12-081)}{
 \itemize{
     \item Minor code changes as suggested by Bioconductor reviewer
 }}
