@@ -2,6 +2,16 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.9.3 (2023-05-15)}{
+\itemize{
+    \item Added PoDCall publication citation
+}}
+
+\section{Changes in version 1.9.2 (2023-05-10)}{
+\itemize{
+    \item Bugfixes
+}}
+
 \section{Changes in version 1.9.1 (2023-05-03)}{
 \itemize{
     \item Made PoDCall compatible with new BioRad software QX Manager

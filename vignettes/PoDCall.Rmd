@@ -16,9 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 # Introduction
-PoDCall (Positive Droplet Caller) is a package that aims to provide a robust
-calling of positive droplets in DNA methylation droplet digital PCR (ddPCR) 
-experiments performed on the Bio-Rad platform.
+PoDCall (Positive Droplet Caller) 
+[M. Jeanmougin et al](https://doi.org/10.1093/bioinformatics/btac766) is a 
+package that aims to provide a robust calling of positive droplets in DNA 
+methylation droplet digital PCR (ddPCR) experiments performed on the Bio-Rad 
+platform.
 PoDCall provides functions that reads files exported from QuantaSoft or 
 QX Manager containing amplitudes from a run of ddPCR (one 96 well plate), sets 
 thresholds for both channels of each individual well and calculates 

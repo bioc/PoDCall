@@ -9,18 +9,20 @@
 
 # Introduction
 
-PoDCall (Positive Droplet Caller) is a package that aims to provide a
-robust calling of positive droplets in DNA methylation droplet digital
-PCR (ddPCR) experiments performed on the Bio-Rad platform. PoDCall
-provides functions that reads files exported from QuantaSoft or QX
-Manager containing amplitudes from a run of ddPCR (one 96 well plate),
-sets thresholds for both channels of each individual well and calculates
-concentrations and normalized concentration for each well.The resulting
-threshold table can optionally be written to file automatically by the
-main workflow function. PoDCall also offers functionality for plotting,
-both individual wells and multiple well plots. Plots for individual
-wells can be made and saved as .pdf-files as part of the main workflow
-function, or by calling the various plotting functions individually.
+PoDCall (Positive Droplet Caller) [M. Jeanmougin et
+al](https://doi.org/10.1093/bioinformatics/btac766) is a package that
+aims to provide a robust calling of positive droplets in DNA methylation
+droplet digital PCR (ddPCR) experiments performed on the Bio-Rad
+platform. PoDCall provides functions that reads files exported from
+QuantaSoft or QX Manager containing amplitudes from a run of ddPCR (one
+96 well plate), sets thresholds for both channels of each individual
+well and calculates concentrations and normalized concentration for each
+well.The resulting threshold table can optionally be written to file
+automatically by the main workflow function. PoDCall also offers
+functionality for plotting, both individual wells and multiple well
+plots. Plots for individual wells can be made and saved as .pdf-files as
+part of the main workflow function, or by calling the various plotting
+functions individually.
 
 ## Gaussian Mixture Models
 
