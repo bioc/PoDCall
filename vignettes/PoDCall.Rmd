@@ -56,9 +56,9 @@ PoDCall requires some packages to be installed, and if any required packages are
 not yet installed, the installation of PoDCall should take care of it (you will 
 be prompted to install the packages that are missing).   
 
-The released version of PoDCall can not yet be installed from 
-[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be installed 
-from GitHub or from a source file using:
+The released version of PoDCall be installed from 
+[BIOCONDUCTOR](http://bioconductor.org/), from GitHub or from a source file 
+using:
 
 ``` {r installation, eval=FALSE}
 ## Install from Bioconductor
@@ -74,7 +74,7 @@ devtools::install_github("HansPetterBrodal/PoDCall")
 
 ## Install PoDCall from source file
 install.packages("remotes")
-remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
+remotes::install_local("path/to/PoDCall_x.y.z.tar.gz")
 
 ```
 After installing PoDCall and the required packages, PoDCall can be loaded with:
@@ -187,7 +187,6 @@ Number of droplets.
 ### c_target 
 Concentration of target, calculated by the formula 
 $-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
-(where does 0.000851 come from from and what is the name of this parameter) 
 where neg_drop_tar is number of negative droplets in channel 1 (target).
 
 ### c_ctrl 

@@ -83,18 +83,19 @@ library(DT)
         ),
         tabPanel("How to use",
                 h3("File Import"),
-                "Select files with amplitude values for the wells that you wish
-                to set thresholds for.",br(),
+                "Select correct software version and then select files with
+                amplitude values for the wells that you",br(),"wish to set
+                thresholds for.",br(),
                 "There is a possibility to upload a sample sheet with sample IDs
                 and array information.",br(),
-                "If such a file is provided, it must contain the following
-                columns:",br(),
-                "- Well",br(), "- Sample", br(), "- TargetType",br(),
-                "- Target", br(),br(),
-                "If desired, number of permutations and Q, the parameter for
-                calling an outlier, can be changed.",br(),
-                "Click 'Set thresholds' to start calculating the thresholds,
-                pos/neg droplets, concentrations etc.", br(),
+                "Such a file can be exported from either 'QuantaSoft' or
+                'QX Manager'. Make sure to select the",br(), "appropriate
+                software version to ensure correct metadata.",br(),
+                "Select an appropriate reference well, and If desired, number of
+                permutations and Q, the parameter", br(), "for calling an
+                outlier, can be changed. Click 'Set thresholds' to start
+                calculating the thresholds,", br(), "pos/neg droplets,
+                concentrations etc.", br(),
                 br(), br(),
                 h3("The Threshold Table"),
                 "Under the tab 'Thresholds', the results from PoDCall will be
@@ -138,8 +139,8 @@ library(DT)
                 input box and click 'Set New Threshold'.",
                 br(),
                 h4("Save plots to file"),
-                "Plots can be saved to file by clicking 'Download Plot'",
-
+                "Plots can be saved to file by clicking 'Download Plot'", br(),
+                br(),br(),br()
       )
     )
   )

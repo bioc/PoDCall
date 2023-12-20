@@ -2,6 +2,11 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.11.1 (2023-05-15)}{
+\itemize{
+    \item Vignette spellcheck
+}}
+
 \section{Changes in version 1.9.3 (2023-05-15)}{
 \itemize{
     \item Added PoDCall publication citation
