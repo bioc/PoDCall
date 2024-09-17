@@ -44,7 +44,7 @@ podcallMultiplot <- function(plateData, thresholds,
 
     ## Check for data in channel 2
     if(ch == 2){
-        if(is.na(plateData[[1]][ch]))
+        if(any(is.na(plateData[[1]][ch])))
             warning("No data for channel 2"); return(NULL)
         if(any(is.na(thresholds)))
             warning("Missing thresholds for for channel 2"); return(NULL)
