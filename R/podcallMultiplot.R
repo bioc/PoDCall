@@ -45,7 +45,7 @@ podcallMultiplot <- function(plateData, thresholds,
     ## Check for data in channel 2
     if(ch == 2){
         if(any(is.na(thresholds)))
-            warning("Missing thresholds for for channel 2"); return(NULL)
+            warning("Missing thresholds for for channel 2")#; return(NULL)
     }
 
     ## Get channel data, add columns with well ID and breaks to color droplets
