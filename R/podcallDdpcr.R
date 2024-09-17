@@ -22,7 +22,10 @@
 #'     (default=200)
 #' @param Q A parameter for calling outliers (default=9)
 #' @param refwell reference well to calculate the shift in baseline (default=1)
-#' @param ch2 Logical argument to denote channel 2 amplitudes (default=TRUE)
+#' @param targetChannel The channel nr used as target channel (default=1)
+#' @param controlChannel The channel nr used as control channel (default=2)
+#' @param nrChannels If single channel target and no control channel, set to 1,
+#'     if control channel is used, set to 2 (default=2)
 #' @param software The software data was exported from, either QuntaSoft or
 #'     QXmanager. Needs to be specified to ensure correct reading of data and
 #'     sample sheet due to difference in formatting. (defult="QX Manager")
@@ -47,7 +50,9 @@
 #'                     B=200,
 #'                     Q=9,
 #'                     refwell=1,
-#'                     ch2=TRUE,
+#'                     targetChannel=1,
+#'                     controlChannel=2,
+#'                     nrChannels=2,
 #'                     software=c("QuantaSoft", "QX Manager")[2],
 #'                     resultsToFile=FALSE,
 #'                     plots=FALSE,
@@ -65,16 +70,15 @@
 #'                                 B=100, software="QuantaSoft")
 #'
 podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
-                        refwell=1, ch2=TRUE,
+                        refwell=1, nrChannels=c(1,2)[2],
+                        targetChannel=c(1,2,3,4,5,6)[1],
+                        controlChannel=c(1,2,3,4,5,6)[2],
                         software=c("QuantaSoft", "QX Manager")[2],
                         resultsToFile=FALSE, plots=FALSE, resPath=NULL){
 
     ## Check arguments
-    checkArgumentsDdpcr(dataDirectory, sampleSheetFile, ch2, software,
+    checkArgumentsDdpcr(dataDirectory, sampleSheetFile, nrChannels, software,
                         resultsToFile, plots)
-
-    ## If only one channel is used in the experiment
-    nrChannels <- ifelse(ch2 == FALSE, 1, 2)
 
     ## Remove possible trailing "/" from path
     pathString <- strsplit(dataDirectory, split=NULL)
@@ -92,7 +96,8 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
     if(software == "QuantaSoft") skiplines <- 0
     if(software == "QX Manager") skiplines <- 4
 
-    plateData <- importAmplitudeData(dataDirectory, skipLines=skiplines)
+    plateData <- importAmplitudeData(dataDirectory, skipLines=skiplines,
+                                     nrChannels=nrChannels)
 
     ## Add sample sheet information
     sampleSheet <- importSampleSheet(sampleSheet=sampleSheetFile,
@@ -102,7 +107,9 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
     ############################## SET THRESHOLDS ##############################
     thrRes <- data.frame(sample_id=sampleSheet[,"sample_id"],
                         podcallThresholds(plateData=plateData,
-                                        nchannels=nrChannels,
+                                        nrChannels=nrChannels,
+                                        targetChannel=targetChannel,
+                                        controlChannel=controlChannel,
                                         B=B, Q=Q, refwell, updateProgress=NULL),
                         q=rep(Q, length(plateData)),
                         target_assay=sampleSheet[,"target_assay"],
@@ -124,14 +131,17 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
     }
     ################################ MAKE PLOTS ################################
     if(plots){
+        channels <- seq_len(nrChannels)
         invisible(mapply(function(x, i) {
-            invisible(vapply(seq_len(nrChannels), function(k) {
+            invisible(vapply(channels, function(k){
                 ## Plot title
-                id <- paste(i, ", ", thrRes[i, "sample_id"], ", ",
+                id <- paste(i, ", ", c(paste0("Ch", targetChannel),"CtrlCh")[k],
+                            ", ", thrRes[i, "sample_id"], ", ",
                             thrRes[i, c("target_assay", "ctrl_assay")[k]])
                 ## File name, plot
                 outputname <- paste(i, thrRes[i, "sample_id"],
-                                    c("target.pdf", "control.pdf")[k], sep="_")
+                                    c(paste0("Ch", targetChannel, ".pdf"),
+                                        "control.pdf")[k], sep="_")
                 ## Write scatter plot and histogram to file
                 grDevices::pdf(paste(resDir, outputname,sep=""))
                 podcallChannelPlot(channelData=stats::na.omit(x[, k]),
@@ -149,18 +159,20 @@ podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
 ## Internal functions
 
 ## Function that checks the arguments to podcallDdpcr()
-checkArgumentsDdpcr <- function(dataDirectory, sampleSheetFile, ch2, software,
-                            resultsToFile, plots){
+checkArgumentsDdpcr <- function(dataDirectory, sampleSheetFile, nrChannels,
+                                software, resultsToFile, plots){
 
     ## Check arguments
-    if(!is.character(dataDirectory)) stop("dataDirectory must be character")
+    if(!is.character(dataDirectory)) stop("'dataDirectory' must be character")
     if(!is.character(sampleSheetFile) & !is.null(sampleSheetFile))
-        stop("sampleSheetFile must be character")
-    if(!is.logical(ch2)) stop("ch2 must be logical")
+        stop("'sampleSheetFile' must be character")
+    if(!is.numeric(nrChannels)) stop("'nrChannels' must be numeric")
+    if(!(nrChannels %in% seq_len(6)))
+        stop("'nrChannels' must be at least 1 and maximum 6")
     if(!(software %in% c("QuantaSoft", "QX Manager")))
-        stop("software must be 'QuantaSoft' or 'QX Manger'")
-    if(!is.logical(resultsToFile)) stop("resultsToFile must be logical")
-    if(!is.logical(plots)) stop("plots must be logical")
+        stop("'software' must be 'QuantaSoft' or 'QX Manger'")
+    if(!is.logical(resultsToFile)) stop("'resultsToFile' must be logical")
+    if(!is.logical(plots)) stop("'plots' must be logical")
 
     return(NULL)
 }

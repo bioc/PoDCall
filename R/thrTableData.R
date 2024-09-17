@@ -8,8 +8,9 @@
 #' @format A \code{data.frame} with 13 columns, which are:
 #' \describe{
 #' \item{sample_id}{Sample ID}
-#' \item{thr_target}{Threshold channel 1 (target assay)}
-#' \item{thr_ctrl}{Threshold channel 2 (control assay)}
+#' \item{target_ch}{Target channel}
+#' \item{thr_target}{Threshold target channel (target assay)}
+#' \item{thr_ctrl}{Threshold control channel (control assay)}
 #' \item{pos_dr_target}{Positive droplets target}
 #' \item{pos_dr_ctrl}{Positive droplets control}
 #' \item{tot_droplets}{Total droplets}

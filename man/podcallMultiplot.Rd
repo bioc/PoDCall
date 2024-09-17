@@ -4,7 +4,12 @@
 \alias{podcallMultiplot}
 \title{podcallMultiplot}
 \usage{
-podcallMultiplot(plateData, thresholds, channel)
+podcallMultiplot(
+  plateData,
+  thresholds,
+  channel = c("target", "control"),
+  colCh = c(1, 2, 3, 4, 5, 6)
+)
 }
 \arguments{
 \item{plateData}{A list containing data frames with amplitude values from
@@ -12,7 +17,9 @@ selected wells that is to be compared. One data frame per well.}
 
 \item{thresholds}{A vector containing the thresholds for the selected wells}
 
-\item{channel}{What channel to plot: 1 or 2}
+\item{channel}{What channel to plot,  'target' channel or 'ontrol' channel.}
+
+\item{colCh}{The channel from the instrument to plot. Controls color of plot.}
 }
 \value{
 Faceted scatterplot with line indicating threshold. One facet per
@@ -34,6 +41,6 @@ data("thrTable")
 ## Create plot using threshold from thrTable, see ?thrTable
 plot <- podcallMultiplot(plateData=data,
                         thresholds=thrTable[names(data), ],
-                        channel=1)
+                        channel="target")
 
 }

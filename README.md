@@ -53,9 +53,9 @@ packages are not yet installed, the installation of PoDCall should take
 care of it (you will be prompted to install the packages that are
 missing).
 
-The released version of PoDCall can not yet be installed from
-[BIOCONDUCTOR](http://bioconductor.org/), but for now it can be
-installed from GitHub or from a source file.
+The released version of PoDCallcan be installed from
+[BIOCONDUCTOR](http://bioconductor.org/), from GitHub or from a source
+file.
 
 ``` r
 ## Install PoDCall from Bioconductor
@@ -70,7 +70,7 @@ devtools::install_github("HansPetterBrodal/PoDCall")
 
 ## Install PoDCall from source file
 install.packages("remotes")
-remotes::install_local("path/to/PoDCall_0.99.0.tar.gz")
+remotes::install_local("path/to/PoDCall_x.y.z.tar.gz")
 ```
 
 After installing PoDCall and the required packages, PoDCall can be
@@ -142,10 +142,27 @@ The well used as reference when calculating the shift in baseline
 between wells. By default `refwell=1`, but can be changed in cases where
 the first well is not suited to be used.
 
-### ch2
+### nrChannels
 
-If channel 2 is not in use, set ch2 = FALSE to avoid error caused by
-empty channel 2 column. Default is `ch2=TRUE`.
+If there is no control channel used, set nrChannels=1 to indicate only
+target channel used. Default value is 2.
+
+### targetChannel
+
+When a multiplexed set up is used (more than a single target channel),
+what channel to be analysed is the target channel. Default
+targetChannel=1.
+
+### controlChannel
+
+The channel used for control assay. Default controlChannel=2.
+
+### software
+
+The Bio-Rad software the data was exported from. Must be either
+“QuantaSoft” or “QX Manager”, the latter being default. This is due to
+unequal number of lines that needs to be skipped in the raw amplitude
+data files.
 
 ### resultsToFile
 
@@ -180,21 +197,25 @@ columns with more or less self-explanatory column names, and well ID
 If a sample sheet file is provided, this will have the sample ID from
 the sample sheet. Otherwise empty
 
+### target\_ch
+
+The channel used for target assay
+
 ### thr\_target
 
-the threshold set for channel 1, assumed to be the target
+the threshold set for selected target channel
 
 ### thr\_ctrl
 
-The threshold set for channel 2, assumed to be the control
+The threshold set for control channel
 
 ### pos\_dr\_target
 
-The number of positive droplets in channel 1 (target)
+The number of positive droplets in selected target channel
 
 ### pos\_dr\_ctrl
 
-The number of positive droplets in channel 2 (control)
+The number of positive droplets in control channel
 
 ### tot\_droplets
 
@@ -423,12 +444,12 @@ ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 thresholdTable <- thrTable
 
 ## Channel to plot
-ch <- 1
+ch <- "target"
 
 ## Create comparison plot
 podcallMultiplot(plateData=ampData,
                 thresholds=thresholdTable[names(ampData),], 
-                channel=ch)
+                channel=ch, colCh=1)
 ```
 
 <img src="man/figures/README-comparison-plot-1.png" width="100%" />
@@ -521,21 +542,21 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_1.9.1
+#> [1] PoDCall_1.9.2
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] tidyselect_1.1.2     xfun_0.29            shinyjs_2.1.0       
-#>  [4] purrr_0.3.4          colorspace_2.0-2     vctrs_0.3.8         
+#>  [4] purrr_0.3.4          colorspace_2.0-2     vctrs_0.6.5         
 #>  [7] generics_0.1.2       htmltools_0.5.2      yaml_2.2.2          
-#> [10] utf8_1.2.2           rlang_1.0.1          pillar_1.7.0        
+#> [10] utf8_1.2.2           rlang_1.1.4          pillar_1.9.0        
 #> [13] later_1.3.0          glue_1.6.1           DBI_1.1.2           
-#> [16] bit64_4.0.5          lifecycle_1.0.1      stringr_1.4.0       
+#> [16] bit64_4.0.5          lifecycle_1.0.4      stringr_1.4.0       
 #> [19] munsell_0.5.0        gtable_0.3.0         htmlwidgets_1.5.4   
 #> [22] LaplacesDemon_16.1.6 evaluate_0.15        labeling_0.4.2      
 #> [25] knitr_1.37           tzdb_0.2.0           fastmap_1.1.0       
 #> [28] httpuv_1.6.5         parallel_4.1.0       fansi_1.0.2         
 #> [31] highr_0.9            Rcpp_1.0.8           xtable_1.8-4        
-#> [34] readr_2.1.2          scales_1.1.1         promises_1.2.0.1    
+#> [34] readr_2.1.2          scales_1.3.0         promises_1.2.0.1    
 #> [37] DT_0.20              diptest_0.76-0       vroom_1.5.7         
 #> [40] farver_2.1.0         bit_4.0.4            mime_0.12           
 #> [43] gridExtra_2.3        ggplot2_3.3.5        hms_1.1.1           

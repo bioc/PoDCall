@@ -11,9 +11,10 @@ podcallScatterplot(channelData, thr, channel, plotId = NULL)
 
 \item{thr}{The threshold set for \code{channel} of a well.}
 
-\item{channel}{The channel the amplitude values belong to.}
+\item{channel}{The channel the amplitude values belong to. Used to control
+plot color.}
 
-\item{plotId}{A character string with title for the plot}
+\item{plotId}{A character string with title for the plot.}
 }
 \value{
 A scatterplot of all droplets from a channel from a well with a line

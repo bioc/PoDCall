@@ -7,7 +7,9 @@
 importSampleSheet(
   sampleSheet = NULL,
   well_id = NULL,
-  software = c("QuantaSoft", "QX Manager")[2]
+  software = c("QuantaSoft", "QX Manager")[2],
+  targetChannel = c(1, 2, 3, 4, 5, 6)[1],
+  controlChannel = c(1, 2, 3, 4, 5, 6)[2]
 )
 }
 \arguments{
@@ -20,9 +22,14 @@ amplitude files.}
 \item{software}{Name (character) of software data and sample sheet was
 exported from. Must be either 'QuantaSoft' or 'QX Manager'. Be careful
 to use correct spelling.}
+
+\item{targetChannel}{The channel nr used as target channel (default=1)}
+
+\item{controlChannel}{The channel nr used as control channel (default=2)}
 }
 \value{
-A matrix with columns for sample ID, target assay and control assay.
+A data.frame with columns for sample ID, target assay and control
+    assay.
 }
 \description{
 Function that takes a path to a .csv-file containing information

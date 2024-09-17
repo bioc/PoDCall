@@ -13,10 +13,13 @@
 #' @param software Name (character) of software data and sample sheet was
 #'     exported from. Must be either 'QuantaSoft' or 'QX Manager'. Be careful
 #'     to use correct spelling.
+#' @param targetChannel The channel nr used as target channel (default=1)
+#' @param controlChannel The channel nr used as control channel (default=2)
 #'
 #' @importFrom readr read_csv
 #'
-#' @return A matrix with columns for sample ID, target assay and control assay.
+#' @return A data.frame with columns for sample ID, target assay and control
+#'     assay.
 #'
 #' @export
 #'
@@ -32,7 +35,9 @@
 #'                                  software="QuantaSoft")
 #'
 importSampleSheet <- function(sampleSheet=NULL, well_id=NULL,
-                                software=c("QuantaSoft", "QX Manager")[2]){
+                                software=c("QuantaSoft", "QX Manager")[2],
+                                targetChannel=c(1,2,3,4,5,6)[1],
+                                controlChannel=c(1,2,3,4,5,6)[2]){
     ## Check arguments
     if(!is.character(sampleSheet) & !is.null(sampleSheet))
         stop("'sampleSheet' must be character")
@@ -45,7 +50,8 @@ importSampleSheet <- function(sampleSheet=NULL, well_id=NULL,
         sampleTable <- importSampleSheetQS(sampleSheet, well_id)
 
     if(software == "QX Manager")
-        sampleTable <- importSampleSheetQXM(sampleSheet, well_id)
+        sampleTable <- importSampleSheetQXM(sampleSheet, well_id, targetChannel,
+                                            controlChannel)
 
     return(sampleTable)
 }
@@ -103,7 +109,8 @@ importSampleSheetQS <- function(sampleSheet=NULL, well_id=NULL){
 }
 
 ## Import sample sheet exported from QX Manager
-importSampleSheetQXM <- function(sampleSheet=NULL, well_id=NULL){
+importSampleSheetQXM <- function(sampleSheet=NULL, well_id=NULL,
+                                    targetChannel, controlChannel){
 
     ## Create vectors to hold sample information
     sample_id <- character(length(well_id))
@@ -136,16 +143,22 @@ importSampleSheetQXM <- function(sampleSheet=NULL, well_id=NULL){
                                stringsAsFactors=FALSE)
             ## Order by well
             ssDfOrdered <- ssDf[order(ssDf$Well),]
-            ## Get columns with relevant information
-            ssDfCh1 <-
-                ssDfOrdered[which(ssDfOrdered$DyeName.s. == "FAM"),]
+
+            ## Dyes used, and their order in channels 1-6
+            dyes <- c("FAM", "VIC", "Cy5", "Cy5.5", "ROX", "ATTO590")
+            targetDye <- dyes[targetChannel]
+            controlDye <- dyes[controlChannel]
+
+            ## Get rows corresponding to target and control channel
+            ssDfTarget <-
+                ssDfOrdered[which(ssDfOrdered$DyeName.s. == targetDye),]
             ctrlAssayAll <-
-                ssDfOrdered[which(ssDfOrdered$DyeName.s. == "VIC"),
+                ssDfOrdered[which(ssDfOrdered$DyeName.s. == controlDye),
                             "Target"]
             ## Get rows corresponding with amplitude files
-            ssRows <- match(well_id, ssDfCh1$Well)
-            sample_id <- ssDfCh1[ssRows, "Sample.description.1"]
-            target_assay <- ssDfCh1[ssRows, "Target"]
+            ssRows <- match(well_id, ssDfTarget$Well)
+            sample_id <- ssDfTarget[ssRows, "Sample.description.1"]
+            target_assay <- ssDfTarget[ssRows, "Target"]
             ctrl_assay <- ctrlAssayAll[ssRows]
         }
     }

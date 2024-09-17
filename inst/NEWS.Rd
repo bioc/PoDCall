@@ -2,6 +2,12 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.13.1 (2023-05-15)}{
+\itemize{
+    \item Made PoDCall compatible with multiplexed target assays (multiple
+    target channels)
+}}
+
 \section{Changes in version 1.11.1 (2023-05-15)}{
 \itemize{
     \item Vignette spellcheck

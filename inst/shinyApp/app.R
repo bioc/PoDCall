@@ -16,6 +16,10 @@ library(DT)
               sidebarLayout(
                   sidebarPanel(
                   uiOutput("softwareOutput"),
+                  selectInput("targetChannelInput", "Target channel",
+                              choices=c(1,2,3,4,5,6), selected=1),
+                  selectInput("controlChannelInput", "Control channel",
+                              choices=c(1,2,3,4,5,6), selected=2),
                   fileInput("amplitudeFile",
                               "Select amplitude (.csv) file(s)",
                               accept=c("text/csv",
@@ -30,6 +34,8 @@ library(DT)
                               multiple=FALSE),
                   tags$hr(),
                   uiOutput("refWellOutput"),
+                  #uiOutput("targetChannelOutput"),
+                  #uiOutput("controlChannelOutput"),
                   numericInput("BInput", "Number of permutations", 200),
                   numericInput("QInput", "Q (For determining outliers)", 9),
                   actionButton("goButton", "Set thresholds")
@@ -66,8 +72,8 @@ library(DT)
                 sidebarPanel(
                 uiOutput("wellOutput"),
                 selectInput("channelInput", "Select channel",
-                            choices=c("Channel 1 - target",
-                                    "Channel 2 - control")),
+                            choices=c("Target channel",
+                                    "Control channel")),
                     uiOutput("thresholdOutput"),
                     actionButton("newThreshold",
                                 "Set New Threshold"),br(),br(),
@@ -160,6 +166,10 @@ server <- function(input, output, session) {
     ## Read in data from selected files and store in a list
     plateList <- reactive ({
 
+        ## Channels to analyse
+        tarCh <- as.numeric(input$targetChannelInput)
+        ctrlCh <- as.numeric(input$controlChannelInput)
+
         ## File object
         inFile <- input$amplitudeFile
 
@@ -179,20 +189,24 @@ server <- function(input, output, session) {
         ## Read files and store in list
         plateData <- mapply(function(x, i){
             wellData <- utils::read.csv(x, header=TRUE, sep=",", skip=skipLines,
-                                        )[seq_len(2)]
-            colnames(wellData) <- c("Ch1", "Ch2")
-            if(TRUE %in% is.nan(wellData[, 1]) | TRUE %in% is.na(wellData[, 1]))
-                showNotification(paste0("Check channel 1 values in file: ", i),
-                                 duration=NULL, type="warning")
+                                        )[c(tarCh, ctrlCh)] #[seq_len(2)]
+            colnames(wellData) <- c("Ch1", "Ch2", "Ch3",
+                                    "Ch4", "Ch5", "Ch6")[c(tarCh, ctrlCh)]
+            if(TRUE %in% is.nan(wellData[, 1]) |
+                TRUE %in% is.na(wellData[, 1]))
+                showNotification(paste0("Check channel ", tarCh,
+                                        " values in file: ", i),
+                                duration=NULL, type="warning")
             return(list(wellData))
         }, x=inFile$datapath, i=inFile$name)
 
-        Ch2Missing <- lapply(plateData, function(x){TRUE %in% is.na(x[,2])})
-        if(TRUE %in% Ch2Missing)
-            showNotification(paste0("There is missing data for channel 2 in one
-                                    or more input files. Check input files or
-                                    disregard if channel is not used."),
-                                    duration=NULL, type="warning")
+        ## Warning if there is missing data in control channel
+        ctrlChMissing <- lapply(plateData, function(x){TRUE %in% is.na(x[, 2])})
+        if(TRUE %in% ctrlChMissing)
+            showNotification(paste0("There is missing data for control channel
+                                in one or more input files. Check input
+                                files or disregard if channel is not used."),
+                                duration=NULL, type="warning")
 
         ## Set well ID as names for data frames holding amplitude data
         names(plateData) <- well_id
@@ -216,23 +230,44 @@ server <- function(input, output, session) {
         ## File object
         inFile <- input$ssFile
 
+        tarCh <- as.numeric(input$targetChannelInput)
+        ctrlCh <- as.numeric(input$controlChannelInput)
+
         ## Import sample sheet data
         ssData <- importSampleSheet(sampleSheet=inFile$datapath[1],
                                     well_id=names(plateList()),
-                                    software=input$softwareInput)
+                                    software=input$softwareInput,
+                                    targetChannel=tarCh,
+                                    controlChannel=ctrlCh)
 
     })
 
     ## Create refWell selection output
     output$refWellOutput <- renderUI({
-
       selectInput("refWellInput", "Reference well",
                   choices=names(plateList()),
                   selected=TRUE,
                   multiple=FALSE,
-                  #width="100%",
                   selectize=TRUE)
     })
+
+    # ## Create target channel selection output
+    # output$targetChannelOutput <- renderUI({
+    #   selectInput("targetChannelInput", "Target channel",
+    #               choices=c(1,2,3,4,5,6),
+    #               selected=FALSE,
+    #               multiple=FALSE,
+    #               selectize=TRUE)
+    # })
+    #
+    # ## Create control channel selection output
+    # output$controlChannelOutput <- renderUI({
+    #   selectInput("controlChannelInput", "Control channel",
+    #               choices=c(1,2,3,4,5,6),
+    #               selected=FALSE,
+    #               multiple=FALSE,
+    #               selectize=TRUE)
+    # })
 
     ## Calculate the results/thresholds
     thr <- eventReactive(input$goButton, {
@@ -261,23 +296,29 @@ server <- function(input, output, session) {
         target_assay <- ssData()[, "target_assay"]
         ctrl_assay <- ssData()[, "ctrl_assay"]
 
-        editedCh1 <- character(length(plateList))
-        editedCh2 <- character(length(plateList))
+        editedTarget <- character(length(plateList))
+        editedControl <- character(length(plateList))
         q <- rep(input$QInput, length(plateList))
         referenceWell <- which(names(plateList) == input$refWellInput)
+
+        ## Channels to analyse
+        tarCh <- as.numeric(input$targetChannelInput)
+        ctrlCh <- as.numeric(input$controlChannelInput)
 
         # Calculate threshold table
         data.frame(sample_id,
                     podcallThresholds(plateData=plateList,
-                                    nchannels=dim(plateList[[1]])[2],
+                                    nrChannels=dim(plateList[[1]])[2],
                                     B=input$BInput,
                                     Q=input$QInput,
                                     refWell=referenceWell,
+                                    targetChannel=tarCh,
+                                    controlChannel=ctrlCh,
                                     updateProgress=updateProgress),
                     q,
                     target_assay, ctrl_assay,
                     ref_well=names(plateList)[referenceWell],
-                    editedCh1, editedCh2,
+                    editedTarget, editedControl,
                     stringsAsFactors=FALSE)
     })
 
@@ -368,7 +409,7 @@ server <- function(input, output, session) {
                 thresholds$df$c_target[i] <- c_tar
                 thresholds$df$c_norm_4Plex[i] <- c_norm_4Plex
                 thresholds$df$c_norm_sg[i] <- c_norm_sg
-                thresholds$df$editedCh1[i] <- "yes"
+                thresholds$df$editedTarget[i] <- "yes"
 
             }
             if(j %in% match("thr_ctrl", names(thresholds$df))){
@@ -398,7 +439,7 @@ server <- function(input, output, session) {
                 thresholds$df$c_ctrl[i] <- c_ctrl
                 thresholds$df$c_norm_4Plex[i] <- c_norm_4Plex
                 thresholds$df$c_norm_sg[i] <- c_norm_sg
-                thresholds$df$editedCh2[i] <- "yes"
+                thresholds$df$editedControl[i] <- "yes"
             }
         }
         )
@@ -475,7 +516,7 @@ server <- function(input, output, session) {
     output$thresholdOutput <- renderUI({
         req(length(input$wellInput) == 1)
         chSel <- input$channelInput
-        if(chSel == "Channel 1 - target"){
+        if(chSel == "Target channel"){
             numericInput("thrInput", "Threshold",
                         value=thresholds$df[input$wellInput, "thr_target"],
                         width="25%")
@@ -513,7 +554,7 @@ server <- function(input, output, session) {
         amp_ctrl <- data[[2]]
         amp_tar <- data[[1]]
 
-        if(chSel == "Channel 1 - target"){
+        if(chSel == "Target channel"){
             thresholds$df[well, "thr_target"] <- new_thr
             thresholds$df[well, "pos_dr_target"] <-
                 length(amp_tar[amp_tar>new_thr])
@@ -528,7 +569,7 @@ server <- function(input, output, session) {
             thresholds$df[well, "c_norm_sg"] <-
                 signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                 ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
-            thresholds$df[well, "editedCh1"] <- "yes"
+            thresholds$df[well, "editedTarget"] <- "yes"
         }else{
             thresholds$df[well, "thr_ctrl"] <- new_thr
             thresholds$df[well, "pos_dr_ctrl"] <-
@@ -544,7 +585,7 @@ server <- function(input, output, session) {
             thresholds$df[well, "c_norm_sg"] <-
                 signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
                 ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
-            thresholds$df[well, "editedCh2"] <- "yes"
+            thresholds$df[well, "editedControl"] <- "yes"
         }
     })
 
@@ -557,23 +598,30 @@ server <- function(input, output, session) {
 
     podcallPlot <- reactive({
         req(thresholds$df)
+
+        ## Channels to plot
+        tarCh <- as.numeric(input$targetChannelInput)
+        ctrlCh <- as.numeric(input$controlChannelInput)
+
         ## If single well selected, plot histogram and scatterplot
         if(length(input$wellInput) == 1){
             req(length(input$wellInput) == 1)
 
         ## Get channel from user selection
         chSel <- input$channelInput
-        if(chSel == "Channel 1 - target"){
+        if(chSel == "Target channel"){
             channel <- 1
+            colCh <- tarCh
             thr <- thresholds$df[input$wellInput, "thr_target"]
-            plotTitle <- paste(input$wellInput, ", ",
+            plotTitle <- paste0(input$wellInput, ", Ch", tarCh, ", ",
                                 thresholds$df[input$wellInput, "sample_id"],
                                 ", ",
                                 thresholds$df[input$wellInput, "target_assay"])
-        }else if(chSel == "Channel 2 - control"){
+        }else if(chSel == "Control channel"){
             channel <- 2
+            colCh <- ctrlCh
             thr <- thresholds$df[input$wellInput, "thr_ctrl"]
-            plotTitle <- paste(input$wellInput, ", ",
+            plotTitle <- paste(input$wellInput,", ctrlCh, ",
                                 thresholds$df[input$wellInput, "sample_id"],
                                 ", ",
                                 thresholds$df[input$wellInput, "ctrl_assay"])
@@ -585,12 +633,12 @@ server <- function(input, output, session) {
         # Make histogram for selected well and channel
         wellHist <- podcallHistogram(channelData=wellData[[channel]],
                                     thr=thr,
-                                    channel=channel)
+                                    channel=colCh)
 
         #Make scatterplot of selected well and channel
         wellScatter <- podcallScatterplot(channelData=wellData[[channel]],
                                             thr=thr,
-                                            channel=channel)
+                                            channel=colCh)
 
         grid.arrange(wellHist, wellScatter,
                     nrow=2,
@@ -600,15 +648,17 @@ server <- function(input, output, session) {
 
         ## Set channel from user selection
         chSel <- input$channelInput
-        if(chSel == "Channel 1 - target"){
-            channel <- 1
+        if(chSel == "Target channel"){
+            channel <- "target"
+            ch <- tarCh
             if(any(is.na(thresholds$df[input$wellInput,"thr_target"])))
-                showNotification("Missing thresholds for channel 1",
+                showNotification("Missing thresholds for target channel",
                                 duration=NULL, type="warning")
-        }else if(chSel == "Channel 2 - control"){
-            channel <- 2
+        }else if(chSel == "Control channel"){
+            channel <- "control"
+            ch <- ctrlCh
             if(any(is.na(thresholds$df[input$wellInput,"thr_ctrl"])))
-                showNotification("Missing thresholds for channel 2.Try a
+                showNotification("Missing thresholds for control channel.Try a
                                  different reference well.",
                                 duration=NULL, type="warning")
         }
@@ -618,7 +668,7 @@ server <- function(input, output, session) {
                                     thresholds=thresholds$df[input$wellInput,
                                                             c("thr_target",
                                                               "thr_ctrl")],
-                                    channel=channel)
+                                    channel=channel, colCh=ch)
         print(multiplot)
         }
 

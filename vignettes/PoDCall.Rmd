@@ -16,11 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 # Introduction
-PoDCall (Positive Droplet Caller) 
-[M. Jeanmougin et al](https://doi.org/10.1093/bioinformatics/btac766) is a 
-package that aims to provide a robust calling of positive droplets in DNA 
-methylation droplet digital PCR (ddPCR) experiments performed on the Bio-Rad 
-platform.
+PoDCall (Positive Droplet Caller) is a package that aims to provide a robust
+calling of positive droplets in DNA methylation droplet digital PCR (ddPCR) 
+experiments performed on the Bio-Rad platform.
 PoDCall provides functions that reads files exported from QuantaSoft or 
 QX Manager containing amplitudes from a run of ddPCR (one 96 well plate), sets 
 thresholds for both channels of each individual well and calculates 
@@ -138,9 +136,21 @@ The well used as reference when calculating the shift in baseline
 between wells. By default `refwell=1`, but can be changed in cases where the 
 first well is not suited to be used.  
 
-### ch2 
-If channel 2 is not in use, set ch2 = FALSE to avoid error caused by 
-empty channel 2 column. Default is `ch2=TRUE`.
+### nrChannels 
+If there is no control channel used, set nrChannels=1 to indicate only target
+channel used. Default value is 2.
+
+### targetChannel
+When a multiplexed set up is used (more than a single target channel), what 
+channel to be analysed is the target channel. Default targetChannel=1.
+
+### controlChannel
+The channel used for control assay. Default controlChannel=2.
+
+### software
+The Bio-Rad software the data was exported from. Must be either "QuantaSoft" or 
+"QX Manager", the latter being default. This is due to unequal number of lines 
+that needs to be skipped in the raw amplitude data files.
 
 ### resultsToFile 
 The user can choose to let PoDCall save the results table as a .csv-file by 
@@ -169,17 +179,20 @@ rownames:
 If a sample sheet file is provided, this will have the sample ID from the sample
 sheet. Otherwise empty
 
+### target_ch
+The channel used for target assay
+
 ### thr_target 
-the threshold set for channel 1, assumed to be the target
+the threshold set for selected target channel
 
 ### thr_ctrl 
-The threshold set for channel 2, assumed to be the control
+The threshold set for control channel
 
 ### pos_dr_target
-The number of positive droplets in channel 1 (target)
+The number of positive droplets in selected target channel
 
 ### pos_dr_ctrl 
-The number of positive droplets in channel 2 (control)
+The number of positive droplets in control channel
 
 ### tot_droplets 
 Number of droplets.
@@ -364,12 +377,12 @@ ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
 thresholdTable <- thrTable
 
 ## Channel to plot
-ch <- 1
+ch <- "target"
 
 ## Create comparison plot
 podcallMultiplot(plateData=ampData,
                 thresholds=thresholdTable[names(ampData),], 
-                channel=ch)
+                channel=ch, colCh=1)
 
 ```
 

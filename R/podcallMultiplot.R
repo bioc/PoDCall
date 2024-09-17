@@ -6,7 +6,8 @@
 #' @param plateData A list containing data frames with amplitude values from
 #'     selected wells that is to be compared. One data frame per well.
 #' @param thresholds A vector containing the thresholds for the selected wells
-#' @param channel What channel to plot: 1 or 2
+#' @param channel What channel to plot,  'target' channel or 'ontrol' channel.
+#' @param colCh The channel from the instrument to plot. Controls color of plot.
 #'
 #' @return Faceted scatterplot with line indicating threshold. One facet per
 #'     selected well.
@@ -28,28 +29,34 @@
 #' ## Create plot using threshold from thrTable, see ?thrTable
 #' plot <- podcallMultiplot(plateData=data,
 #'                         thresholds=thrTable[names(data), ],
-#'                         channel=1)
+#'                         channel="target")
 #'
-podcallMultiplot <- function(plateData, thresholds, channel){
+podcallMultiplot <- function(plateData, thresholds,
+                            channel=c("target", "control"),
+                            colCh=c(1,2,3,4,5,6)){
 
     checkArgumentsMultiplot(plateData, thresholds, channel)
 
+    if(channel == "target")
+        ch <- 1
+    if(channel == "control")
+        ch <- 2
+
     ## Check for data in channel 2
-    if(channel == 2){
-        if(any(is.na(plateData[[1]][channel]))){
-            warning("Missing data (NA) for channel 2"); return(NULL)}
-        else if(any(is.na(thresholds))){
-            warning("Missing thresholds for for channel 2"); return(NULL)}
-    }
+    if(ch == 2 && is.na(plateData[[1]][ch])){
+        warning("No data for channel 2"); return(NULL)}
+
+    if(ch == 2 && any(is.na(thresholds))){
+        warning("Missing thresholds for for channel 2"); return(NULL)}
 
     ## Get channel data, add columns with well ID and breaks to color droplets
     plateCh <-
         mapply(function(x, i)
-        {data.frame(wellID=i, Amplitudes=x[,c("Ch1", "Ch2")[channel]],
-                    col=cut(x[,c("Ch1", "Ch2")[channel]],
+        {data.frame(wellID=i, Amplitudes=x[,c(1, 2)[ch]],
+                    col=cut(x[,c(1, 2)[ch]],
                             breaks=c(-Inf,
                                     thresholds[i, c("thr_target",
-                                                    "thr_ctrl")[channel]],
+                                                    "thr_ctrl")[ch]],
                                     Inf),
                             labels=c("(-Inf, thr]", "[thr, Inf)")))},
         x=plateData, i=names(plateData), SIMPLIFY=FALSE)
@@ -63,9 +70,10 @@ podcallMultiplot <- function(plateData, thresholds, channel){
     ## Select data and plotting variables based on channel selection from user
     rows <- sample(nrow(plateChStacked))
     dd <- plateChStacked[rows, ]
-    thrDfCh <- thrDf[, c(c("thr_target", "thr_ctrl")[channel], "wellID")]
+    thrDfCh <- thrDf[, c(c("thr_target", "thr_ctrl")[ch], "wellID")]
     colnames(thrDfCh)[1] <- "thrCh"
-    chCol <- c("dodgerblue3", "forestgreen") # Plot color for channels
+    chCol <- c("dodgerblue3", "forestgreen", "orangered1",
+               "red1", "deeppink3", "cyan2") # Plot color for channels
 
     ## Work-around for "no visible binding for global variable NOTE
     Amplitudes <- NULL; wellID <- NULL; thrCh <- NULL
@@ -80,7 +88,7 @@ podcallMultiplot <- function(plateData, thresholds, channel){
                 axis.ticks.x=element_blank(), legend.position="none")+
         geom_hline(data=thrDfCh, aes(yintercept=thrCh), col="magenta")+
         scale_color_manual(labels=c("neg", "pos"),
-                            values=c("gray50", chCol[channel]))+
+                            values=c("gray50", chCol[colCh]))+
         facet_wrap(~ wellID, ncol=10)
 
     return(multiplot)
@@ -95,7 +103,7 @@ checkArgumentsMultiplot <- function(plateData, thresholds, channel){
     if(!is.list(plateData)) stop("plateData must be a list")
     if(length(plateData) != nrow(thresholds)) stop("Number of elements in
     plateData must be equal to number of rows in thresholds")
-    if(channel > 2 | channel < 1) stop("invalid channel number")
+    if(!(channel %in% c("target", "control"))) stop("invalid channel")
     if(!is.data.frame(thresholds)) stop("thresholds must be a data.frame")
     if(!("thr_target" %in% colnames(thresholds))) stop("thresholds must contain
                                                         column 'thr_target'")

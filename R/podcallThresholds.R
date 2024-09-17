@@ -5,11 +5,14 @@
 #'     concentrations. Results are returned as a data frame.
 #'
 #' @param plateData List of data frames with amplitude data from a 96 well plate
-#' @param nchannels Number of channels used in the experiment (default=2)
+#' @param nrChannels If single channel target and no control channel, set to 1,
+#'     if control channel is used, set to 2 (default=2)
 #' @param B Number of permutations for the Likelihood Ratio Test (LRT)
 #'     (default=200)
 #' @param Q Parameter for outlier calling (default=9)
-#' @param refWell reference well to calculate the shift in baseline (default=1)
+#' @param refWell Reference well to calculate the shift in baseline (default=1)
+#' @param targetChannel The channel nr used as target channel (default=1)
+#' @param controlChannel The channel nr used as control channel (default=2)
 #' @param updateProgress function to update progress bar in shiny app
 #'     (default=NULL)
 #'
@@ -23,7 +26,7 @@
 #' @importFrom LaplacesDemon Modes
 #'
 #' @usage podcallThresholds(plateData,
-#'                         nchannels=c(1,2)[2],
+#'                         nrChannels=c(1,2)[2],
 #'                         B=200,
 #'                         Q=9,
 #'                         refWell=1,
@@ -40,16 +43,21 @@
 #' thresholds <- podcallThresholds(plateData=dataList,
 #'                                 B=100)
 #'
-podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
-                            refWell=1, updateProgress=NULL){
+podcallThresholds <- function(plateData, nrChannels=c(1,2)[2],
+                                B=200, Q=9, refWell=1,
+                                targetChannel=c(1,2,3,4,5,6)[1],
+                                controlChannel=c(1,2,3,4,5,6)[2],
+                                updateProgress=NULL){
 
     ## Check arguments
     if(!is.list(plateData)) stop("plateData must be a list")
-    if(nchannels > 2 | nchannels < 1) stop("invalid number of channels")
+    if(nrChannels > 2 | nrChannels < 1) stop("invalid number of channels")
+    if(targetChannel == controlChannel) stop("Target and control can not be
+                                                the same channel")
 
-    ## Global threshold channel 1 (target channel)
+    ## Global threshold target channel
     if(sum(is.na(plateData[[refWell]][1]))<nrow(plateData[[refWell]])){
-    message("Setting global threshold channel 1")
+    message("Setting global threshold target channel")
     targetExtract <- purrr::map(plateData, 1)
     targetModeReference <- getMode(targetExtract[[refWell]])
     targetAmpScaled <- lapply(targetExtract, function(X){
@@ -57,7 +65,8 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
     targetAmpScaled <- sort(na.omit(unlist(targetAmpScaled)))
 
     ## Progress output for shiny app
-    if(is.function(updateProgress)){text <- paste0("Global threshold channel 1")
+    if(is.function(updateProgress)){text <-
+            paste0("Global threshold target channel")
         updateProgress(detail=text, value=1/3)
     }
     ## Global threshold target channel
@@ -68,16 +77,16 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
         targetModeReference <- NA
     }
 
-    ## Global threhold channel 2 (control channel)
-    message("Setting global threshold channel 2")
+    ## Global threshold channel 2 (control channel)
     if(is.na(plateData[[1]][1,2]) == FALSE){
+        message("Setting global threshold control channel")
         refExtract <- lapply(purrr::map(plateData, 2), function(X){
             return(sort(na.omit(X)))})
         refModeReference <- getMode(refExtract[[refWell]])
 
         ## Progress output for shiny app
         if(is.function(updateProgress)){
-            text <- paste0("Global threshold channel 2")
+            text <- paste0("Global threshold control channel")
             updateProgress(detail=text, value=4/5)
         }
         ## Global threshold control channel
@@ -88,7 +97,7 @@ podcallThresholds <- function(plateData, nchannels=c(1,2)[2], B=200, Q=9,
     #######################  Well-specific thresholding ########################
     ## Populate result data frame
     thrRes <- fillThrTable(plateData, targetRes, targetModeReference,
-                            refRes, refModeReference)
+                            refRes, refModeReference, targetChannel)
 
     return(thrRes)
 }
@@ -127,6 +136,7 @@ get.outliers <- function(component, upper=TRUE, Q){
 
 ## Multimodal thresholding
 thr.multimodal <- function(component, densityEstimate){
+
     modVec <- NULL
     for(i in sort(unique(densityEstimate$classification))){
         modVec[i] <-
@@ -152,64 +162,71 @@ getMode <- function(num){
 globalThresholding <- function(scaledAmplitudeDist, Q, B, init){
     if (diptest::dip.test(scaledAmplitudeDist)$p.value > 0.05) {
         res <- thr.unimodal(scaledAmplitudeDist, Q=Q); comp <- 1
-    }else {
+        print("Unimodal distribution")
+    }else { print("Multimodal distribution")
         if(length(scaledAmplitudeDist) > 8000) {
             scaledAmplitudeDistSubset <-
-                sort(sample(x=scaledAmplitudeDist, size=8000))}
+                sort(sample(x=scaledAmplitudeDist, size=8000))
+            assign("sampled_droplets",
+                    scaledAmplitudeDistSubset, envir=.GlobalEnv)}
         else{scaledAmplitudeDistSubset <- scaledAmplitudeDist}
         if(init == TRUE){
             hc <- mclust::hc(scaledAmplitudeDistSubset, use="VARS",
                             modelName="E")
-            bBIC <- mclustBootstrapLRT(scaledAmplitudeDistSubset,
-                                        modelName="E", nboot=B,
-                                        initialization=list(hcPairs=hc))
+            bBIC <- mclust::mclustBootstrapLRT(scaledAmplitudeDistSubset,
+                                                modelName="E", nboot=B,
+                                                initialization=list(hcPairs=hc))
         }
         else{
-            bBIC <- mclustBootstrapLRT(scaledAmplitudeDistSubset,
-                                        modelName="E", nboot=B)
+            bBIC <- mclust::mclustBootstrapLRT(scaledAmplitudeDistSubset,
+                                                modelName="E", nboot=B)
         }
         comp <-
             suppressWarnings(max(which(bBIC$p.value[seq_len(2)] < 0.05))) + 1
+
         if(is.infinite(comp)) {comp <- 1}
         if(comp == 1) {res <- thr.unimodal(scaledAmplitudeDist, Q = Q)}
         if(comp > 1) {
             res <- thr.multimodal(scaledAmplitudeDist,
-                                    densityEstimate=mclust::densityMclust(
-                                    scaledAmplitudeDist,
-                                    G=comp,
-                                    modelNames="E"))}
-    }
+                                  densityEstimate=mclust::densityMclust(
+                                      scaledAmplitudeDist,
+                                      G=comp,
+                                      modelNames="E")
+                                  )
+            }
+        }
     return(res)
 }
 
 ## Set individual thresholds per well and populate threshold table
 fillThrTable <- function(plateData, targetRes, targetModeReference,
-                        refRes, refModeReference){
+                        refRes, refModeReference, targetChannel){
 
     ## Create data frame to hold the results
-    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=9),
+    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=10),
                         row.names=names(plateData))
-    colnames(thrRes) <- c("thr_target", "thr_ctrl", "pos_dr_target",
+    colnames(thrRes) <- c("target_ch","thr_target", "thr_ctrl", "pos_dr_target",
                         "pos_dr_ctrl", "tot_droplets", "c_target", "c_ctrl",
                         "c_norm_4Plex", "c_norm_sg")
+    thrRes[,"target_ch"] <- paste0("Ch", targetChannel)
 
     ## Populate result data frame
     thrRes[, "thr_target"] <- vapply(plateData, function(x){
         ifelse(is.na(targetRes), NA,
-            {delta <- targetModeReference-getMode(sort(na.omit(x[,"Ch1"])))
+            {delta <- targetModeReference-getMode(sort(na.omit(x[, 1])))
             return(ceiling(targetRes$threshold - delta))})}, numeric(1))
 
     thrRes[, "thr_ctrl"] <- vapply(plateData, function(x){
-        ifelse(is.na(x[1, "Ch2"]), NA,
-                {delta <- refModeReference-getMode(sort(na.omit(x[,"Ch2"])))
+        ifelse(is.na(x[1, 2]), NA,
+                {delta <- refModeReference-getMode(sort(na.omit(x[, 2])))
                 return(ceiling(refRes$threshold - delta))})}, numeric(1))
 
     thrRes[, "pos_dr_target"] <- mapply(function(x, well_id){
-        sum(na.omit(x[,"Ch1"]) >= thrRes[well_id, "thr_target"])},
+        sum(na.omit(x[, 1]) >= thrRes[well_id, "thr_target"])},
         x=plateData, well_id=names(plateData))
 
     thrRes[, "pos_dr_ctrl"] <- mapply(function(x, well_id){
-        sum(na.omit(x[,"Ch2"]) >= thrRes[well_id, "thr_ctrl"])},
+        sum(na.omit(x[, 2]) >= thrRes[well_id, "thr_ctrl"])},
         x=plateData, well_id=names(plateData))
 
     thrRes[, "tot_droplets"] <-

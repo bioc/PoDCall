@@ -11,9 +11,10 @@ podcallHistogram(channelData, thr, channel, plotId = NULL)
 
 \item{thr}{The threshold set for \code{channel} of a well.}
 
-\item{channel}{The channel the amplitude values belong to.}
+\item{channel}{The channel the amplitude values belong to. Target channel is
+1, control channel is 2.}
 
-\item{plotId}{A character string with title for the plot}
+\item{plotId}{A character string with title for the plot.}
 }
 \value{
 A histogram of amplitude values from a channel from a well with a

@@ -5,7 +5,7 @@
 \title{podcallThresholds}
 \usage{
 podcallThresholds(plateData,
-                        nchannels=c(1,2)[2],
+                        nrChannels=c(1,2)[2],
                         B=200,
                         Q=9,
                         refWell=1,
@@ -14,14 +14,19 @@ podcallThresholds(plateData,
 \arguments{
 \item{plateData}{List of data frames with amplitude data from a 96 well plate}
 
-\item{nchannels}{Number of channels used in the experiment (default=2)}
+\item{nrChannels}{If single channel target and no control channel, set to 1,
+if control channel is used, set to 2 (default=2)}
 
 \item{B}{Number of permutations for the Likelihood Ratio Test (LRT)
 (default=200)}
 
 \item{Q}{Parameter for outlier calling (default=9)}
 
-\item{refWell}{reference well to calculate the shift in baseline (default=1)}
+\item{refWell}{Reference well to calculate the shift in baseline (default=1)}
+
+\item{targetChannel}{The channel nr used as target channel (default=1)}
+
+\item{controlChannel}{The channel nr used as control channel (default=2)}
 
 \item{updateProgress}{function to update progress bar in shiny app
 (default=NULL)}

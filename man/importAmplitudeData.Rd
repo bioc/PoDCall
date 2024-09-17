@@ -4,7 +4,13 @@
 \alias{importAmplitudeData}
 \title{importAmplitudeData}
 \usage{
-importAmplitudeData(dataDirectory, skipLines = c(0, 4))
+importAmplitudeData(
+  dataDirectory,
+  skipLines = c(0, 4),
+  nrChannels = c(1, 2)[2],
+  targetChannel = c(1, 2, 3, 4, 5, 6)[1],
+  controlChannel = c(1, 2, 3, 4, 5, 6)[2]
+)
 }
 \arguments{
 \item{dataDirectory}{Path to directory containing Quantasoft amplitude files
@@ -16,6 +22,12 @@ a well plate in the directory.}
 \item{skipLines}{Number of lines to skip in amplitude data files. Must be 0
 or 4 depending on software used to export data. 0 for QuantaSoft, 4 for
 QXmanager.}
+
+\item{nrChannels}{Number of channels/dyes used. Default nrChannels=2}
+
+\item{targetChannel}{The channel nr used as target channel (default=1)}
+
+\item{controlChannel}{The channel nr used as control channel (default=2)}
 }
 \value{
 The function returns a list of dataframes named with the well ID
