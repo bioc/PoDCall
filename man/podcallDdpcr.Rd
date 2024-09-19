@@ -9,9 +9,9 @@ podcallDdpcr(dataDirectory,
                     B=200,
                     Q=9,
                     refwell=1,
-                    targetChannel=1,
-                    controlChannel=2,
-                    nrChannels=2,
+                    targetChannel=c(1,2,3,4,5,6)[1],
+                    controlChannel=c(1,2,3,4,5,6)[2],
+                    nrChannels=c(1,2)[2],
                     software=c("QuantaSoft", "QX Manager")[2],
                     resultsToFile=FALSE,
                     plots=FALSE,
@@ -35,12 +35,12 @@ following columns: Well, Sample, TargetType and Target.}
 
 \item{refwell}{reference well to calculate the shift in baseline (default=1)}
 
-\item{nrChannels}{If single channel target and no control channel, set to 1,
-if control channel is used, set to 2 (default=2)}
-
 \item{targetChannel}{The channel nr used as target channel (default=1)}
 
 \item{controlChannel}{The channel nr used as control channel (default=2)}
+
+\item{nrChannels}{If single channel target and no control channel, set to 1,
+if control channel is used, set to 2 (default=2)}
 
 \item{software}{The software data was exported from, either QuntaSoft or
 QXmanager. Needs to be specified to ensure correct reading of data and

@@ -50,9 +50,9 @@
 #'                     B=200,
 #'                     Q=9,
 #'                     refwell=1,
-#'                     targetChannel=1,
-#'                     controlChannel=2,
-#'                     nrChannels=2,
+#'                     targetChannel=c(1,2,3,4,5,6)[1],
+#'                     controlChannel=c(1,2,3,4,5,6)[2],
+#'                     nrChannels=c(1,2)[2],
 #'                     software=c("QuantaSoft", "QX Manager")[2],
 #'                     resultsToFile=FALSE,
 #'                     plots=FALSE,
@@ -69,10 +69,14 @@
 #'                                 sampleSheetFile=ssPath,
 #'                                 B=100, software="QuantaSoft")
 #'
-podcallDdpcr <- function(dataDirectory, sampleSheetFile=NULL, B=200, Q=9,
-                        refwell=1, nrChannels=c(1,2)[2],
+podcallDdpcr <- function(dataDirectory,
+                        sampleSheetFile=NULL,
+                        B=200,
+                        Q=9,
+                        refwell=1,
                         targetChannel=c(1,2,3,4,5,6)[1],
                         controlChannel=c(1,2,3,4,5,6)[2],
+                        nrChannels=c(1,2)[2],
                         software=c("QuantaSoft", "QX Manager")[2],
                         resultsToFile=FALSE, plots=FALSE, resPath=NULL){
 

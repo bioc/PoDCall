@@ -8,7 +8,6 @@ test_that("Whether comparison plot is created correctly",{
 
     ## Select wells and channel to plot
     wells <- names(amplitudeData)[1:3] # First three wells from set
-    ch <- 1 # target channel
 
     ## Get relevant thresholds (see ?thrTable)
     data("thrTable")
@@ -17,7 +16,7 @@ test_that("Whether comparison plot is created correctly",{
     ## Create plot
     plot <- podcallMultiplot(plateData=amplitudeData[wells],
                              thresholds=thr,
-                             channel=ch)
+                             channel="target", colCh=1)
 
     ## Does function return a plot
     expect_is(plot, class=c("gg", "ggplot"))

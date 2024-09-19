@@ -9,6 +9,8 @@ podcallThresholds(plateData,
                         B=200,
                         Q=9,
                         refWell=1,
+                        targetChannel=c(1,2,3,4,5,6)[1],
+                        controlChannel=c(1,2,3,4,5,6)[2],
                         updateProgress=NULL)
 }
 \arguments{
