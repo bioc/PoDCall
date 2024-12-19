@@ -2,7 +2,12 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
-\section{Changes in version 1.13.1 (2023-05-15)}{
+\section{Changes in version 1.15.1 (2024-12-19)}{
+\itemize{
+    \item Modified results table
+}}
+
+\section{Changes in version 1.13.1 (2024-09-19)}{
 \itemize{
     \item Made PoDCall compatible with multiplexed target assays (multiple
     target channels)

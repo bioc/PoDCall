@@ -179,9 +179,6 @@ rownames:
 If a sample sheet file is provided, this will have the sample ID from the sample
 sheet. Otherwise empty
 
-### target_ch
-The channel used for target assay
-
 ### thr_target 
 the threshold set for selected target channel
 

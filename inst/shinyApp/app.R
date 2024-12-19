@@ -300,6 +300,7 @@ server <- function(input, output, session) {
         editedControl <- character(length(plateList))
         q <- rep(input$QInput, length(plateList))
         referenceWell <- which(names(plateList) == input$refWellInput)
+        targetCh <- rep(input$targetChannelInput, length(plateList))
 
         ## Channels to analyse
         tarCh <- as.numeric(input$targetChannelInput)
@@ -318,7 +319,7 @@ server <- function(input, output, session) {
                     q,
                     target_assay, ctrl_assay,
                     ref_well=names(plateList)[referenceWell],
-                    editedTarget, editedControl,
+                    editedTarget, editedControl, targetCh,
                     stringsAsFactors=FALSE)
     })
 

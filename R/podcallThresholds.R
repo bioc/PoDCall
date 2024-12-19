@@ -205,9 +205,9 @@ fillThrTable <- function(plateData, targetRes, targetModeReference,
                         refRes, refModeReference, targetChannel){
 
     ## Create data frame to hold the results
-    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=10),
+    thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=9),
                         row.names=names(plateData))
-    colnames(thrRes) <- c("target_ch","thr_target", "thr_ctrl", "pos_dr_target",
+    colnames(thrRes) <- c("thr_target", "thr_ctrl", "pos_dr_target",
                         "pos_dr_ctrl", "tot_droplets", "c_target", "c_ctrl",
                         "c_norm_4Plex", "c_norm_sg")
     thrRes[,"target_ch"] <- paste0("Ch", targetChannel)
