@@ -1,7 +1,7 @@
 Package: PoDCall
 Type: Package
 Title: Positive Droplet Calling for DNA Methylation Droplet Digital PCR 
-Version: 1.15.1
+Version: 1.15.2
 Authors@R: c(person("Hans Petter", "Brodal", 
                     role=c("aut", "cre"), 
                     email="h.p.brodal@ous-research.no"),

@@ -120,7 +120,7 @@ importSampleSheetQXM <- function(sampleSheet=NULL, well_id=NULL,
     if(!is.null(sampleSheet)){
         ## Read in table from file,
         ssTable <- suppressMessages(
-            suppressWarnings(readr::read_delim(sampleSheet, delim=";",
+            suppressWarnings(readr::read_delim(sampleSheet, delim=",",
                                                col_names=TRUE),
                             classes=c("warning", "message")))
 
