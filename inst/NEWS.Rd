@@ -2,6 +2,12 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.17.1 (2025-07-08)}{
+\itemize{
+    \item Added alternative way to set threshold in instances when threshold
+    would be returned as NA
+}}
+
 \section{Changes in version 1.15.1 (2024-12-19)}{
 \itemize{
     \item Modified results table

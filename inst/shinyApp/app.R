@@ -251,24 +251,6 @@ server <- function(input, output, session) {
                   selectize=TRUE)
     })
 
-    # ## Create target channel selection output
-    # output$targetChannelOutput <- renderUI({
-    #   selectInput("targetChannelInput", "Target channel",
-    #               choices=c(1,2,3,4,5,6),
-    #               selected=FALSE,
-    #               multiple=FALSE,
-    #               selectize=TRUE)
-    # })
-    #
-    # ## Create control channel selection output
-    # output$controlChannelOutput <- renderUI({
-    #   selectInput("controlChannelInput", "Control channel",
-    #               choices=c(1,2,3,4,5,6),
-    #               selected=FALSE,
-    #               multiple=FALSE,
-    #               selectize=TRUE)
-    # })
-
     ## Calculate the results/thresholds
     thr <- eventReactive(input$goButton, {
 

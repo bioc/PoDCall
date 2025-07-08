@@ -148,7 +148,12 @@ thr.multimodal <- function(component, densityEstimate){
     mod1 <- sort(modVec[which(modVec>getMode(component))])[1]
     mod2 <- sort(modVec[which(modVec>getMode(component))])[2]
 
-    #set the threshold as the median of the 2 components
+    # In cases where mod2 is NA
+    if(is.na(mod2)){
+        mod2 <- modVec[2]
+    }
+
+    #set the threshold as the mean of the 2 components
     thr <- mean(c(mod1,mod2))
 
     message("Global threshold set to: ", thr)
