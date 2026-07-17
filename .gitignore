@@ -9,3 +9,5 @@ PoDCall.Rproj
 data-raw
 /doc/
 /Meta/
+devel.R
+output.csv

@@ -109,12 +109,9 @@ The following arguments have default values, but can be given other values if
 desired. For example to write results to file, which is disabled by default.
 
 ### sampleSheetFile 
-Path to sample sheet file. Must be a .csv file and must include the following 
-columns: Well, Sample, TargetType and Target. The entries in the column 
-TargetType must be either 'Ch1Unknown' or 'Ch2Unknown', and is used
-to extract rows with information from either channel 1 or channel 2. An example
-file has been included in the package, which can be found using 
-`system.file("extdata", "Sample_names.csv", package="PoDCall")`
+Path to sample sheet file. Must be a .csv file and if exported from Quanta Soft it must include the following columns: Well, Sample, TargetType and Target. 
+The entries in the column 'TargetType' must be either 'Ch1Unknown' or 'Ch2Unknown', and is used to extract rows with information from either channel 1 or channel 2. An example file has been included in the package, which can be found using `system.file("extdata", "Sample_names.csv", package="PoDCall")`.
+File exported from QX Manager must include the following columns: Well, Sample Description 1, Dye Name(s) and Target.
 
 ### B 
 The number of permutations used by the likelihood ratio test (LRT) 
@@ -146,6 +143,10 @@ channel to be analysed is the target channel. Default targetChannel=1.
 
 ### controlChannel
 The channel used for control assay. Default controlChannel=2.
+
+### dropletVolume
+Tne average droplet volume in µL used to calculate concentrations. Default 
+dropletVolume=0.000851, can be changed to the updated value 0.000795
 
 ### software
 The Bio-Rad software the data was exported from. Must be either "QuantaSoft" or 
@@ -196,13 +197,15 @@ Number of droplets.
 
 ### c_target 
 Concentration of target, calculated by the formula 
-$-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}$ 
-where neg_drop_tar is number of negative droplets in channel 1 (target).
+$-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{V_d}$ 
+where neg_drop_tar is number of negative droplets in channel 1 (target), and Vd
+is average droplet volume (0.000851 µL by deafult).
 
 ### c_ctrl 
 Concentration of control, calculated by the formula 
-$-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}$ 
-where neg_drop_ctrl is number of negative droplets in channel 2 (control).
+$-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{V_d}$ 
+where neg_drop_ctrl is number of negative droplets in channel 2 (control), and 
+Vd is average droplet volume (0.000851 µL by deafult).
 
 ### c_norm_4Plex 
 Normalized concentration with 4Plex as control, calculated by the formula 

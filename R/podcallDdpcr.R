@@ -24,6 +24,8 @@
 #' @param refwell reference well to calculate the shift in baseline (default=1)
 #' @param targetChannel The channel nr used as target channel (default=1)
 #' @param controlChannel The channel nr used as control channel (default=2)
+#' @param dropletVolume The average droplet size in µL used to calculate
+#'      concentration (default=0.000851)
 #' @param nrChannels If single channel target and no control channel, set to 1,
 #'     if control channel is used, set to 2 (default=2)
 #' @param software The software data was exported from, either QuntaSoft or
@@ -52,6 +54,7 @@
 #'                     refwell=1,
 #'                     targetChannel=c(1,2,3,4,5,6)[1],
 #'                     controlChannel=c(1,2,3,4,5,6)[2],
+#'                     dropletVolume=c(0.000851, 0.000795)[1],
 #'                     nrChannels=c(1,2)[2],
 #'                     software=c("QuantaSoft", "QX Manager")[2],
 #'                     resultsToFile=FALSE,
@@ -76,6 +79,7 @@ podcallDdpcr <- function(dataDirectory,
                         refwell=1,
                         targetChannel=c(1,2,3,4,5,6)[1],
                         controlChannel=c(1,2,3,4,5,6)[2],
+                        dropletVolume=c(0.000851, 0.000795)[1],
                         nrChannels=c(1,2)[2],
                         software=c("QuantaSoft", "QX Manager")[2],
                         resultsToFile=FALSE, plots=FALSE, resPath=NULL){
@@ -114,6 +118,7 @@ podcallDdpcr <- function(dataDirectory,
                                         nrChannels=nrChannels,
                                         targetChannel=targetChannel,
                                         controlChannel=controlChannel,
+                                        dropletVolume=dropletVolume,
                                         B=B, Q=Q, refwell, updateProgress=NULL),
                         q=rep(Q, length(plateData)),
                         target_assay=sampleSheet[,"target_assay"],
@@ -129,7 +134,7 @@ podcallDdpcr <- function(dataDirectory,
 
     ## Write results to result-file
     if(resultsToFile){
-        utils::write.table(data.frame("Well_ID"=names(plateData), thrRes),
+        utils::write.table(data.frame("well_ID"=names(plateData), thrRes),
                             file=file.path(resDir, resFilename),
                             row.names=FALSE, quote=FALSE, sep=",")
     }

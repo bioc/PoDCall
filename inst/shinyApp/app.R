@@ -38,6 +38,8 @@ library(DT)
                   #uiOutput("controlChannelOutput"),
                   numericInput("BInput", "Number of permutations", 200),
                   numericInput("QInput", "Q (For determining outliers)", 9),
+                  selectInput("dropletVolumeInput", "Droplet Volume µL",
+                              choices=c(0.000851, 0.000795), selected=0.000851),
                   actionButton("goButton", "Set thresholds")
                 ),
                 mainPanel(h3("Selected files")
@@ -63,6 +65,28 @@ library(DT)
                 fluidRow(downloadButton("thrOutput", "Download results"),
                         actionButton("resetTableEdit", "Undo changes"),
                         br(),br(),
+                        h3("Export DDES"),
+                        textInput(inputId="experimentID",
+                                    label="experiment ID",
+                                    value="",
+                                    placeholder=""),
+                        textInput(inputId="run_ID",
+                                    label="run ID",
+                                    value="",
+                                    placeholder=""),
+                        textInput(inputId="instrument",
+                                    label="instrument",
+                                    value="",
+                                    placeholder=""),
+                        textInput(inputId="plateType",
+                                    label="plate type",
+                                    value="",
+                                    placeholder=""),
+                        textInput(inputId="instrumentSoftwareVersion",
+                                    label="Instrument Software Version",
+                                    value="",
+                                    placeholder=""),
+                        downloadButton("thrOutputDDES", "Download DDES format"),
                         fileInput("importResults", "Upload results file"),
                         style="margin-left: 10px;"
                 )
@@ -251,6 +275,11 @@ server <- function(input, output, session) {
                   selectize=TRUE)
     })
 
+    ## Droplet volume reactive variable
+    dropletVolume <- reactive({
+        as.numeric(input$dropletVolumeInput)
+    })
+
     ## Calculate the results/thresholds
     thr <- eventReactive(input$goButton, {
 
@@ -297,6 +326,7 @@ server <- function(input, output, session) {
                                     refWell=referenceWell,
                                     targetChannel=tarCh,
                                     controlChannel=ctrlCh,
+                                    dropletVolume=dropletVolume(),
                                     updateProgress=updateProgress),
                     q,
                     target_assay, ctrl_assay,
@@ -376,16 +406,17 @@ server <- function(input, output, session) {
                     length(amp_ctrl[amp_ctrl<thresholds$df$thr_ctrl[i]])
                 pos_dr_tar <- tot_droplets-neg_drop_tar
 
-                c_tar <- signif((-log(neg_drop_tar/tot_droplets))/0.000851,
-                                digits=4)
+                c_tar <-
+                    signif((-log(neg_drop_tar/tot_droplets))/dropletVolume(),
+                            digits=4)
                 c_norm_4Plex <-
-                    signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                        ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400,
+                    signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                    ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*400,
                         digits=4)
 
                 c_norm_sg <-
-                  signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                            ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100,
+                  signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                    ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*100,
                          digits=4)
 
                 thresholds$df$pos_dr_target[i] <- pos_dr_tar
@@ -406,16 +437,17 @@ server <- function(input, output, session) {
                     length(amp_tar[amp_tar<thresholds$df$thr_target[i]])
                 pos_dr_ctrl <- tot_droplets-neg_drop_ctrl
 
-                c_ctrl <- signif((-log(neg_drop_ctrl/tot_droplets))/0.000851,
+                c_ctrl <-
+                    signif((-log(neg_drop_ctrl/tot_droplets))/dropletVolume(),
                             digits=4)
                 c_norm_4Plex <-
-                    signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                        ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400,
-                        digits=4)
+                    signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                    ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*400,
+                    digits=4)
 
                 c_norm_sg <-
-                    signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                            ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100,
+                    signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                    ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*100,
                         digits=4)
 
                 thresholds$df$pos_dr_ctrl[i] <- pos_dr_ctrl
@@ -452,6 +484,7 @@ server <- function(input, output, session) {
 
     ## Disable downloadbutton for result table before the table is produced
     shinyjs::disable("thrOutput")
+    shinyjs::disable("thrOutputDDES")
 
     ## Produce the threshold table output
     output$thresholdTable <- renderDT ({
@@ -459,6 +492,7 @@ server <- function(input, output, session) {
         req(length(thresholds$df)>0)
 
         shinyjs::enable("thrOutput") #Enable downloadbutton for result table
+        shinyjs::enable("thrOutputDDES") #Enable downloadbutton for result table
 
         DT::datatable(data=thresholds$df,
                     selection="none",
@@ -478,6 +512,65 @@ server <- function(input, output, session) {
         content=function(file){ # Create file contents
             write.csv(data.frame("Well_ID"=names(plateList()),thresholds$df),
                     file, row.names=FALSE)
+        }
+    )
+
+    ## Reactive variables with DDES meta data input
+    xprmntID <- reactive({
+        input$experimentID
+    })
+
+    runID <- reactive({
+        input$run_ID
+    })
+
+    instrumentID <- reactive({
+        input$instrument
+    })
+
+    plate_type <- reactive({
+        input$plateType
+    })
+
+    instrmntSftwrVrsn <- reactive({
+        input$instrumentSoftwareVersion
+    })
+
+    ## Produce download button, DDES
+    output$thrOutputDDES <- downloadHandler(
+        filename=function(){ # Make filename suggestion
+            paste0("DDES_experimentID_runID_",
+                    format(Sys.time(), "%Y%m%d%H%M"),
+                    "_main.csv")
+        },
+        content=function(file){ # Create file contents
+
+            ## Meta data
+            DDES_type <- "main"
+            instrument_software_version <- ""
+
+            ## Create header lines with meta data
+            header_lines <- c("Header",
+                                paste0("DDES_version ", "1.0"),
+                                paste0("datetime: ", format(Sys.time(),
+                                                            "%Y%m%d%H%M")),
+                                paste0("experiment_ID ",xprmntID()),
+                                paste0("run_ID ", runID()),
+                                paste0("DDES_type ", DDES_type),
+                                paste0("instrument ", instrumentID()),
+                                paste0("plate_type ", plate_type()),
+                                paste0("instrument_software_version ",
+                                        instrmntSftwrVrsn()),
+                                "data")
+            header <- file(file, "w")
+            writeLines(paste0("#", header_lines), header)
+            close(header)
+
+            ## Append table to file
+            write.table(data.frame("well_ID"=names(plateList()),
+                                thresholds$df),
+                      file, row.names=FALSE, sep=",", quote=FALSE,
+                      append=TRUE)
         }
     )
 
@@ -545,13 +638,16 @@ server <- function(input, output, session) {
             neg_drop_tar <- tot_droplets-length(amp_tar[amp_tar>new_thr])
             neg_drop_ctrl <- tot_droplets-thresholds$df[well, "pos_dr_ctrl"]
             thresholds$df[well,"c_target"] <-
-                signif((-log(neg_drop_tar/tot_droplets))/0.000851, digits=4)
+                signif((-log(neg_drop_tar/tot_droplets))/dropletVolume(),
+                        digits=4)
             thresholds$df[well, "c_norm_4Plex"] <-
-                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400, digits=4)
+                signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*400,
+                digits=4)
             thresholds$df[well, "c_norm_sg"] <-
-                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
+                signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*100,
+                digits=4)
             thresholds$df[well, "editedTarget"] <- "yes"
         }else{
             thresholds$df[well, "thr_ctrl"] <- new_thr
@@ -561,13 +657,16 @@ server <- function(input, output, session) {
             neg_drop_tar <- tot_droplets-thresholds$df[well, "pos_dr_target"]
             neg_drop_ctrl <- tot_droplets-length(amp_ctrl[amp_ctrl>new_thr])
             thresholds$df[well, "c_ctrl"] <-
-                signif((-log(neg_drop_ctrl/tot_droplets))/0.000851, digits=4)
+                signif((-log(neg_drop_ctrl/tot_droplets))/dropletVolume(),
+                        digits=4)
             thresholds$df[well, "c_norm_4Plex"] <-
-                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*400, digits=4)
+                signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*400,
+                digits=4)
             thresholds$df[well, "c_norm_sg"] <-
-                signif((((-log(neg_drop_tar/tot_droplets))/0.000851)/
-                ((-log(neg_drop_ctrl/tot_droplets))/0.000851))*100, digits=4)
+                signif((((-log(neg_drop_tar/tot_droplets))/dropletVolume())/
+                ((-log(neg_drop_ctrl/tot_droplets))/dropletVolume()))*100,
+                digits=4)
             thresholds$df[well, "editedControl"] <- "yes"
         }
     })
@@ -626,6 +725,7 @@ server <- function(input, output, session) {
         grid.arrange(wellHist, wellScatter,
                     nrow=2,
                     top=plotTitle)
+
         }else{ # Multiple wells selected...
             req(length(input$wellInput) > 1)
 
@@ -651,7 +751,10 @@ server <- function(input, output, session) {
                                     thresholds=thresholds$df[input$wellInput,
                                                             c("thr_target",
                                                               "thr_ctrl")],
-                                    channel=channel, colCh=ch)
+                                    channel=channel,
+                                    sampleID=thresholds$df[input$wellInput,
+                                                            "sample_id"],
+                                    colCh=ch)
         print(multiplot)
         }
 
@@ -666,10 +769,10 @@ server <- function(input, output, session) {
 
     output$downloadPlot <- downloadHandler(
         filename=function() {
-            paste("PoDCall_results-", Sys.Date(), ".tiff", sep="")},
+            paste0("PoDCall_results_", Sys.Date(), ".png")},
         content=function(file) {
-            ggsave(file, plot=podcallPlot(), device="tiff", dpi=320,
-                    width=10, height=10, units="in")}
+            ggsave(file, plot=podcallPlot(), device="png",
+                   dpi=320, width=10, height=10, units="in")}
     )
 
     }

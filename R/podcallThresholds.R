@@ -13,6 +13,8 @@
 #' @param refWell Reference well to calculate the shift in baseline (default=1)
 #' @param targetChannel The channel nr used as target channel (default=1)
 #' @param controlChannel The channel nr used as control channel (default=2)
+#' @param dropletVolume The average droplet size in µL used to calculate
+#'      concentration (default=0.000851)
 #' @param updateProgress function to update progress bar in shiny app
 #'     (default=NULL)
 #'
@@ -32,6 +34,7 @@
 #'                         refWell=1,
 #'                         targetChannel=c(1,2,3,4,5,6)[1],
 #'                         controlChannel=c(1,2,3,4,5,6)[2],
+#'                         dropletVolume=c(0.000851, 0.000795)[1],
 #'                         updateProgress=NULL)
 #'
 #' @examples
@@ -49,6 +52,7 @@ podcallThresholds <- function(plateData, nrChannels=c(1,2)[2],
                                 B=200, Q=9, refWell=1,
                                 targetChannel=c(1,2,3,4,5,6)[1],
                                 controlChannel=c(1,2,3,4,5,6)[2],
+                                dropletVolume=c(0.000851, 0.000795)[1],
                                 updateProgress=NULL){
 
     ## Check arguments
@@ -99,7 +103,7 @@ podcallThresholds <- function(plateData, nrChannels=c(1,2)[2],
     #######################  Well-specific thresholding ########################
     ## Populate result data frame
     thrRes <- fillThrTable(plateData, targetRes, targetModeReference,
-                            refRes, refModeReference, targetChannel)
+                        refRes, refModeReference, targetChannel, dropletVolume)
 
     return(thrRes)
 }
@@ -207,7 +211,7 @@ globalThresholding <- function(scaledAmplitudeDist, Q, B, init){
 
 ## Set individual thresholds per well and populate threshold table
 fillThrTable <- function(plateData, targetRes, targetModeReference,
-                        refRes, refModeReference, targetChannel){
+                        refRes, refModeReference, targetChannel, dropletVolume){
 
     ## Create data frame to hold the results
     thrRes <- data.frame(matrix(0, nrow=length(plateData), ncol=9),
@@ -239,14 +243,15 @@ fillThrTable <- function(plateData, targetRes, targetModeReference,
     thrRes[, "tot_droplets"] <-
         vapply(plateData, function(x) nrow(x), numeric(1))
 
-    cst <- 0.000851 # Constant from QuantaSoft (Bio-Rad)
     thrRes[, "c_target"] <-
         signif(-log((thrRes[, "tot_droplets"]-thrRes[, "pos_dr_target"])/
-                        thrRes[, "tot_droplets"])/cst, digits=4)
+                        thrRes[, "tot_droplets"])/dropletVolume, digits=4)
+
     thrRes[, "c_ctrl"] <-
         signif(-log((thrRes[, "tot_droplets"]-thrRes[, "pos_dr_ctrl"])/
-                        thrRes[, "tot_droplets"])/cst, digits=4)
-    thrRes[, "c_norm_4Plex"] <-
+                        thrRes[, "tot_droplets"])/dropletVolume, digits=4)
+
+     thrRes[, "c_norm_4Plex"] <-
         ifelse(thrRes[, "c_ctrl"] == 0, "No DNA",
                 signif((thrRes[, "c_target"]/thrRes[, "c_ctrl"])*400,
                         digits=4))

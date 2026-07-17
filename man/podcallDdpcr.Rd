@@ -11,6 +11,7 @@ podcallDdpcr(dataDirectory,
                     refwell=1,
                     targetChannel=c(1,2,3,4,5,6)[1],
                     controlChannel=c(1,2,3,4,5,6)[2],
+                    dropletVolume=c(0.000851, 0.000795)[1],
                     nrChannels=c(1,2)[2],
                     software=c("QuantaSoft", "QX Manager")[2],
                     resultsToFile=FALSE,
@@ -38,6 +39,9 @@ following columns: Well, Sample, TargetType and Target.}
 \item{targetChannel}{The channel nr used as target channel (default=1)}
 
 \item{controlChannel}{The channel nr used as control channel (default=2)}
+
+\item{dropletVolume}{The average droplet size in µL used to calculate
+concentration (default=0.000851)}
 
 \item{nrChannels}{If single channel target and no control channel, set to 1,
 if control channel is used, set to 2 (default=2)}

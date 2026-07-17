@@ -8,6 +8,7 @@ podcallMultiplot(
   plateData,
   thresholds,
   channel = c("target", "control"),
+  sampleID = NULL,
   colCh = c(1, 2, 3, 4, 5, 6)
 )
 }
@@ -15,9 +16,11 @@ podcallMultiplot(
 \item{plateData}{A list containing data frames with amplitude values from
 selected wells that is to be compared. One data frame per well.}
 
-\item{thresholds}{A vector containing the thresholds for the selected wells}
+\item{thresholds}{A data.frame containing the thresholds for the selected wells}
 
 \item{channel}{What channel to plot,  'target' channel or 'ontrol' channel.}
+
+\item{sampleID}{The sample IDs for the selected wells.}
 
 \item{colCh}{The channel from the instrument to plot. Controls color of plot.}
 }

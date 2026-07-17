@@ -2,6 +2,12 @@
 \title{News for Package \pkg{PoDCall}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.21.1 (2026-07-09)}{
+\itemize{
+    \item Added choice of droplet volume for calculating concentrations
+    \item Added option to download DDES formatted results from shiny app
+}}
+
 \section{Changes in version 1.17.1 (2025-07-08)}{
 \itemize{
     \item Added alternative way to set threshold in instances when threshold

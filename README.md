@@ -96,7 +96,7 @@ thresholdTable <- podcallDdpcr(dataDirectory="path/to/data/",
 
 Where “path/to/data/” is the path of the directory that contains
 amplitude files from a well plate, in which the files have names that
-end with "\_wellID\_amplitude.csv“.”software" is the software that was
+end with “\_wellID_amplitude.csv”.”software” is the software that was
 used to export the data (amplitude) files and the sample sheet. Must be
 either “QuantaSoft” or “QX Manager”. Since the different software
 versions format amplitude files and sample sheet differently, it is
@@ -116,8 +116,8 @@ and must include the following columns: Well, Sample, TargetType and
 Target. The entries in the column TargetType must be either ‘Ch1Unknown’
 or Ch2Unknown, and is used to extract rows with information from either
 channel 1 or channel 2. An example file has been included in the
-package, which can be found using `system.file("extdata",
-"Sample_names.csv", package="PoDCall")`
+package, which can be found using
+`system.file("extdata", "Sample_names.csv", package="PoDCall")`
 
 ### B
 
@@ -157,6 +157,12 @@ targetChannel=1.
 
 The channel used for control assay. Default controlChannel=2.
 
+### dropletVolume
+
+Tne average droplet volume in µL used to calculate concentrations.
+Default dropletVolume=0.000851, can be changed to the updated value
+0.000795
+
 ### software
 
 The Bio-Rad software the data was exported from. Must be either
@@ -170,8 +176,8 @@ The user can choose to let PoDCall save the results table as a .csv-file
 by setting `resultsToFile=TRUE` (default: `resultsToFile = FALSE`). When
 resultsToFile is set to TRUE, a results directory will be created where
 the result file will be saved. The results directory will have the same
-name as the data directory with "\_results" added:
-"path/to/data\_results/
+name as the data directory with “\_results” added:
+“path/to/data_results/
 
 ### plots
 
@@ -192,72 +198,72 @@ The table that is returned when running `podcall_ddpcr()` contains
 columns with more or less self-explanatory column names, and well ID
 (well coordinates) as rownames:
 
-### sample\_id
+### sample_id
 
 If a sample sheet file is provided, this will have the sample ID from
 the sample sheet. Otherwise empty
 
-### target\_ch
+### target_ch
 
 The channel used for target assay
 
-### thr\_target
+### thr_target
 
 the threshold set for selected target channel
 
-### thr\_ctrl
+### thr_ctrl
 
 The threshold set for control channel
 
-### pos\_dr\_target
+### pos_dr_target
 
 The number of positive droplets in selected target channel
 
-### pos\_dr\_ctrl
+### pos_dr_ctrl
 
 The number of positive droplets in control channel
 
-### tot\_droplets
+### tot_droplets
 
 Number of droplets.
 
-### c\_target
+### c_target
 
 Concentration of target, calculated by the formula
-\(-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{0.000851}\)
-where neg\_drop\_tar is number of negative droplets in channel 1
-(target).
+$-\log\dfrac{\dfrac{\text{neg_drop_tar}}{\text{tot_droplets}}}{V_d}$
+where neg_drop_tar is number of negative droplets in channel 1 (target),
+and Vd is average droplet volume (0.000851 µL by deafult).
 
-### c\_ctrl
+### c_ctrl
 
 Concentration of control, calculated by the formula
-\(-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{0.000851}\)
-where neg\_drop\_ctrl is number of negative droplets in channel 2
-(control).
+$-\log\dfrac{\dfrac{\text{neg_drop_ctrl}}{\text{tot_droplets}}}{V_d}$
+where neg_drop_ctrl is number of negative droplets in channel 2
+(control), and Vd is average droplet volume (0.000851 µL by deafult).
 
-### c\_norm\_4Plex
+### c_norm_4Plex
 
 Normalized concentration with 4Plex as control, calculated by the
-formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400\)
+formula $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot400$
 
-### c\_norm\_sg
+### c_norm_sg
 
 Normalized concentration with single gene as control, calculated by the
-formula \(\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100\)
+formula $\dfrac{\text{c_target}}{\text{c_ctrl}}\cdot100$
 
 ### q
 
 The value used for Q
 
-### target\_assay
+### target_assay
 
 The assay used for target channel, provided via sample sheet.
 
-### ctrl\_assay
+### ctrl_assay
 
 The assay used for control channel, provided via sample sheet.
 
-### ref\_well
+### ref_well
 
 The well used as reference well for setting threshold.
 
@@ -375,7 +381,7 @@ podcallChannelPlot(channelData=ampData[[well_id]][,ch],
                     plotId=plotTitle)
 ```
 
-<img src="man/figures/README-channel-plot-1.png" width="100%" />
+<img src="man/figures/README-channel-plot-1.png" alt="" width="100%" />
 
 ## `podcallScatterplot()`
 
@@ -402,7 +408,7 @@ podcallScatterplot(channelData=ampData[[well_id]][,ch],
                     plotId=plotTitle)
 ```
 
-<img src="man/figures/README-scatter-plot-1.png" width="100%" />
+<img src="man/figures/README-scatter-plot-1.png" alt="" width="100%" />
 
 ## `podcallHistogram()`
 
@@ -429,7 +435,7 @@ podcallHistogram(channelData=ampData[[well_id]][,ch],
                 plotId=plotTitle)
 ```
 
-<img src="man/figures/README-plot-histogram-1.png" width="100%" />
+<img src="man/figures/README-plot-histogram-1.png" alt="" width="100%" />
 
 ## `podcallMultiplot()`
 
@@ -452,7 +458,7 @@ podcallMultiplot(plateData=ampData,
                 channel=ch, colCh=1)
 ```
 
-<img src="man/figures/README-comparison-plot-1.png" width="100%" />
+<img src="man/figures/README-comparison-plot-1.png" alt="" width="100%" />
 
 # PoDCall shiny application
 
@@ -504,18 +510,24 @@ PoDCall is loaded, and is available as an object called `thrTable`. See
 ``` r
 ## The threshold table
 thrTable
-#>       sample_id thr_target thr_ctrl pos_dr_target pos_dr_ctrl tot_droplets
-#> A04      SW1463       2761     9127          2479       12906        18739
-#> B04       SW403       2739     8632           660        7471        16933
-#> D04       SW480       2863     8489            44        8348        11713
-#> D05 IVDZ_bisulf       2818     8473          1675        6584        12642
-#> H05         NTC       2823     7910             0           0        19638
-#>     c_target c_ctrl c_norm_4Plex c_norm_sg q target_assay ctrl_assay ref_well
-#> A04  166.700 1371.0        48.64     12.16 9          VIM   new4Plex      A04
-#> B04   46.720  683.9        27.33     6.831 9          VIM   new4Plex      A04
-#> D04    4.423 1466.0        1.207    0.3017 9          VIM   new4Plex      A04
-#> D05  167.000  864.4        77.28     19.32 9          VIM   new4Plex      A04
-#> H05    0.000    0.0       No DNA    No DNA 9          VIM   new4Plex      A04
+#>       sample_id target_ch thr_target thr_ctrl pos_dr_target pos_dr_ctrl
+#> A04      SW1463       Ch1       2761     9128          2479       12905
+#> B04       SW403       Ch1       2739     8632           660        7471
+#> D04       SW480       Ch1       2863     8489            44        8348
+#> D05 IVDZ_bisulf       Ch1       2818     8473          1675        6584
+#> H05         NTC       Ch1       2823     7910             0           0
+#>     tot_droplets c_target c_ctrl c_norm_4Plex c_norm_sg q target_assay
+#> A04        18739  166.700 1371.0        48.64     12.16 9          VIM
+#> B04        16933   46.720  683.9        27.33     6.831 9          VIM
+#> D04        11713    4.423 1466.0        1.207    0.3017 9          VIM
+#> D05        12642  167.000  864.4        77.28     19.32 9          VIM
+#> H05        19638    0.000    0.0       No DNA    No DNA 9          VIM
+#>     ctrl_assay ref_well
+#> A04   new4Plex      A04
+#> B04   new4Plex      A04
+#> D04   new4Plex      A04
+#> D05   new4Plex      A04
+#> H05   new4Plex      A04
 ```
 
 # Session info
@@ -525,46 +537,48 @@ document was compiled
 
 ``` r
 sessionInfo()
-#> R version 4.1.0 (2021-05-18)
-#> Platform: x86_64-w64-mingw32/x64 (64-bit)
-#> Running under: Windows 7 x64 (build 7601) Service Pack 1
+#> R version 4.5.3 (2026-03-11 ucrt)
+#> Platform: x86_64-w64-mingw32/x64
+#> Running under: Windows 11 x64 (build 26100)
 #> 
 #> Matrix products: default
+#>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Norwegian (Bokmål)_Norway.1252 
-#> [2] LC_CTYPE=Norwegian (Bokmål)_Norway.1252   
-#> [3] LC_MONETARY=Norwegian (Bokmål)_Norway.1252
-#> [4] LC_NUMERIC=C                              
-#> [5] LC_TIME=Norwegian (Bokmål)_Norway.1252    
+#> [1] LC_COLLATE=Norwegian Bokmål_Norway.utf8 
+#> [2] LC_CTYPE=Norwegian Bokmål_Norway.utf8   
+#> [3] LC_MONETARY=Norwegian Bokmål_Norway.utf8
+#> [4] LC_NUMERIC=C                            
+#> [5] LC_TIME=Norwegian Bokmål_Norway.utf8    
+#> 
+#> time zone: Europe/Oslo
+#> tzcode source: internal
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] PoDCall_1.9.2
+#> [1] PoDCall_1.21.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] tidyselect_1.1.2     xfun_0.29            shinyjs_2.1.0       
-#>  [4] purrr_0.3.4          colorspace_2.0-2     vctrs_0.6.5         
-#>  [7] generics_0.1.2       htmltools_0.5.2      yaml_2.2.2          
-#> [10] utf8_1.2.2           rlang_1.1.4          pillar_1.9.0        
-#> [13] later_1.3.0          glue_1.6.1           DBI_1.1.2           
-#> [16] bit64_4.0.5          lifecycle_1.0.4      stringr_1.4.0       
-#> [19] munsell_0.5.0        gtable_0.3.0         htmlwidgets_1.5.4   
-#> [22] LaplacesDemon_16.1.6 evaluate_0.15        labeling_0.4.2      
-#> [25] knitr_1.37           tzdb_0.2.0           fastmap_1.1.0       
-#> [28] httpuv_1.6.5         parallel_4.1.0       fansi_1.0.2         
-#> [31] highr_0.9            Rcpp_1.0.8           xtable_1.8-4        
-#> [34] readr_2.1.2          scales_1.3.0         promises_1.2.0.1    
-#> [37] DT_0.20              diptest_0.76-0       vroom_1.5.7         
-#> [40] farver_2.1.0         bit_4.0.4            mime_0.12           
-#> [43] gridExtra_2.3        ggplot2_3.3.5        hms_1.1.1           
-#> [46] digest_0.6.29        stringi_1.7.6        rlist_0.4.6.2       
-#> [49] dplyr_1.0.8          shiny_1.7.1          grid_4.1.0          
-#> [52] cli_3.1.1            tools_4.1.0          magrittr_2.0.2      
-#> [55] tibble_3.1.6         crayon_1.5.0         pkgconfig_2.0.3     
-#> [58] ellipsis_0.3.2       data.table_1.14.2    assertthat_0.2.1    
-#> [61] rmarkdown_2.11       rstudioapi_0.13      R6_2.5.1            
-#> [64] mclust_5.4.9         compiler_4.1.0
+#>  [1] generics_0.1.4       hms_1.1.4            digest_0.6.39       
+#>  [4] magrittr_2.0.4       evaluate_1.0.5       grid_4.5.3          
+#>  [7] RColorBrewer_1.1-3   fastmap_1.2.0        mclust_6.1.2        
+#> [10] gridExtra_2.3        promises_1.5.0       purrr_1.2.1         
+#> [13] scales_1.4.0         rlist_0.4.6.2        cli_3.6.5           
+#> [16] shiny_1.13.0         crayon_1.5.3         rlang_1.1.7         
+#> [19] bit64_4.6.0-1        LaplacesDemon_16.1.8 withr_3.0.2         
+#> [22] yaml_2.3.12          otel_0.2.0           tools_4.5.3         
+#> [25] parallel_4.5.3       tzdb_0.5.0           dplyr_1.2.0         
+#> [28] ggplot2_4.0.2        httpuv_1.6.17        DT_0.34.0           
+#> [31] vctrs_0.7.2          R6_2.6.1             mime_0.13           
+#> [34] lifecycle_1.0.5      bit_4.6.0            htmlwidgets_1.6.4   
+#> [37] vroom_1.7.0          shinyjs_2.1.1        pkgconfig_2.0.3     
+#> [40] pillar_1.11.1        later_1.4.8          gtable_0.3.6        
+#> [43] glue_1.8.0           data.table_1.18.2.1  Rcpp_1.1.1          
+#> [46] xfun_0.57            tibble_3.3.1         tidyselect_1.2.1    
+#> [49] rstudioapi_0.18.0    knitr_1.51           farver_2.1.2        
+#> [52] xtable_1.8-8         htmltools_0.5.9      labeling_0.4.3      
+#> [55] rmarkdown_2.31       readr_2.2.0          compiler_4.5.3      
+#> [58] S7_0.2.1             diptest_0.77-2
 ```

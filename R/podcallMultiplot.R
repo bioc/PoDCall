@@ -5,8 +5,9 @@
 #'
 #' @param plateData A list containing data frames with amplitude values from
 #'     selected wells that is to be compared. One data frame per well.
-#' @param thresholds A vector containing the thresholds for the selected wells
+#' @param thresholds A data.frame containing the thresholds for the selected wells
 #' @param channel What channel to plot,  'target' channel or 'ontrol' channel.
+#' @param sampleID The sample IDs for the selected wells.
 #' @param colCh The channel from the instrument to plot. Controls color of plot.
 #'
 #' @return Faceted scatterplot with line indicating threshold. One facet per
@@ -33,9 +34,10 @@
 #'
 podcallMultiplot <- function(plateData, thresholds,
                             channel=c("target", "control"),
+                            sampleID=NULL,
                             colCh=c(1,2,3,4,5,6)){
 
-    checkArgumentsMultiplot(plateData, thresholds, channel)
+    checkArgumentsMultiplot(plateData, thresholds, channel, sampleID)
 
     if(channel == "target")
         ch <- 1
@@ -48,17 +50,20 @@ podcallMultiplot <- function(plateData, thresholds,
             warning("Missing thresholds for for channel 2")#; return(NULL)
     }
 
+    #paste0(names(plateData),"_", sampleID)
+
     ## Get channel data, add columns with well ID and breaks to color droplets
     plateCh <-
-        mapply(function(x, i)
-        {data.frame(wellID=i, Amplitudes=x[,c(1, 2)[ch]],
+        mapply(function(x, i, j)
+        {data.frame(wellID=i, plotID=paste0(i,"_",j),
+                    Amplitudes=x[,c(1, 2)[ch]],
                     col=cut(x[,c(1, 2)[ch]],
                             breaks=c(-Inf,
                                     thresholds[i, c("thr_target",
                                                     "thr_ctrl")[ch]],
                                     Inf),
                             labels=c("(-Inf, thr]", "[thr, Inf)")))},
-        x=plateData, i=names(plateData), SIMPLIFY=FALSE)
+        x=plateData, i=names(plateData), j=sampleID, SIMPLIFY=FALSE)
 
     ## Stack elements of channel list to create long format data frame
     plateChStacked <- rlist::list.stack(plateCh)
@@ -77,6 +82,11 @@ podcallMultiplot <- function(plateData, thresholds,
     ## Work-around for "no visible binding for global variable NOTE
     Amplitudes <- NULL; wellID <- NULL; thrCh <- NULL
 
+    # Lag en named vector: wellID -> sampleID (én unik entry per wellID)
+    wellID_labels <- dd %>%
+        dplyr::distinct(wellID, plotID) %>%
+        { setNames(as.character(.$plotID), as.character(.$wellID)) }
+
     ## Faceted scatter plot of amplitude values for the selected wells
     multiplot <-
         ggplot(data=dd, aes(x=seq_len(nrow(dd)), y=Amplitudes, group=wellID,
@@ -88,7 +98,8 @@ podcallMultiplot <- function(plateData, thresholds,
         geom_hline(data=thrDfCh, aes(yintercept=thrCh), col="magenta")+
         scale_color_manual(labels=c("neg", "pos"),
                             values=c("gray50", chCol[colCh]))+
-        facet_wrap(~ wellID, ncol=10)
+        facet_wrap(~ wellID, ncol=10,
+                   labeller=as_labeller(wellID_labels))
 
     return(multiplot)
 }
@@ -96,7 +107,7 @@ podcallMultiplot <- function(plateData, thresholds,
 ## Internal functions
 
 ## Check arguments to podcallMultiplot()
-checkArgumentsMultiplot <- function(plateData, thresholds, channel){
+checkArgumentsMultiplot <- function(plateData, thresholds, channel, sampleID){
 
     ## Check arguments
     if(!is.list(plateData)) stop("plateData must be a list")
@@ -108,6 +119,9 @@ checkArgumentsMultiplot <- function(plateData, thresholds, channel){
                                                         column 'thr_target'")
     if(!("thr_ctrl" %in% colnames(thresholds))) stop("thresholds must contain
                                                         column 'thr_ctrl'")
+    if(length(sampleID) != length(plateData)) stop("number of sample IDs must
+                                                be same as number of selected
+                                                wells")
 
     return(NULL)
 }
