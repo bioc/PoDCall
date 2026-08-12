@@ -15,8 +15,9 @@
 #' @export
 #'
 #' @importFrom ggplot2 ggplot aes geom_point labs theme element_blank geom_hline
-#'     scale_color_manual facet_wrap vars
+#'     scale_color_manual facet_wrap vars as_labeller
 #' @importFrom rlist list.stack
+#' @importFrom dplyr %>% distinct
 #'
 #' @examples
 #'

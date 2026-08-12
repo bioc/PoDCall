@@ -372,8 +372,11 @@ for comparing wells.
 
 ```{r comparison-plot, echo=TRUE}
 ## Read in data and threshold table
-path <- system.file("extdata", "Amplitudes/", package="PoDCall")
-ampData <- importAmplitudeData(dataDirectory=path, skipLines=0)
+dataPath <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ampData <- importAmplitudeData(dataDirectory=dataPath, skipLines=0)
+ssPath <- system.file("extdata", "Sample_names.csv", package="PoDCall")
+sampleSheet <- importSampleSheet(sampleSheet=ssPath, well_id=names(ampData),
+                                software="QuantaSoft")
 thresholdTable <- thrTable
 
 ## Channel to plot
@@ -382,7 +385,7 @@ ch <- "target"
 ## Create comparison plot
 podcallMultiplot(plateData=ampData,
                 thresholds=thresholdTable[names(ampData),], 
-                channel=ch, colCh=1)
+                channel=ch, sampleID=sampleSheet$sample_id, colCh=1)
 
 ```
 
