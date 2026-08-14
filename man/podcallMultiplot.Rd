@@ -36,14 +36,18 @@ A function that returns faceted scatterplots for multiple wells
 
 ## Set path to data
 path <- system.file("extdata", "Amplitudes/", package="PoDCall")
+ssPath <- system.file("extdata", "Sample_names.csv", package="PoDCall")
 
 ## Read in data files
 data <- importAmplitudeData(path, skipLines=0)
+sampleSheet <- importSampleSheet(sampleSheet=ssPath, well_id=names(data),
+software="QuantaSoft")
 data("thrTable")
 
 ## Create plot using threshold from thrTable, see ?thrTable
 plot <- podcallMultiplot(plateData=data,
                         thresholds=thrTable[names(data), ],
+                        sampleID=sampleSheet$sample_id,
                         channel="target")
 
 }
